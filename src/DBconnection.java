@@ -5,26 +5,24 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DBconnection {
-    private final String dbName;
-    DBconnection(String dbName) {
-        this.dbName = dbName;
-    }
+    private static final String CONFIG_PATH = "../.config.properties";  // se non trova il file prova a scrivere il path assoluto
 
-    public Connection connect() {
+    public static Connection connect() {
         Connection connection = null;
 
-        try (FileInputStream input = new FileInputStream("/home/angelo/Documents/OO/Java/ProgettoCalciatori/.config.properties")) {
+        try (FileInputStream input = new FileInputStream(CONFIG_PATH)) {
             Properties prop = new Properties();
             prop.load(input);
+            String dbName = prop.getProperty("db.name");
             String dbUrl = prop.getProperty("db.url") + dbName;
-            String username = prop.getProperty("db.username");
+            String user = prop.getProperty("db.user");
             String password = prop.getProperty("db.password");
-
-            connection = DriverManager.getConnection(dbUrl, username, password);
-            if (connection != null) System.out.println("connection to " + dbName + " established");
+            
+            connection = DriverManager.getConnection(dbUrl, user, password);
+            if (connection != null) System.out.println("Connection to " + dbName + " established");
             else System.out.println("Connection failed");
-        }
-
+        } 
+        
         catch (Exception e) {
             e.printStackTrace();
         }
@@ -32,11 +30,11 @@ public class DBconnection {
         return connection;
     }
 
-    public void disconnect(Connection connection) {
+    public static void disconnect(Connection connection) {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
-                System.out.println("Connection to " + dbName + " closed");
+                System.out.println("Connection closed");
             }
         } catch (SQLException e) {
             e.printStackTrace();
