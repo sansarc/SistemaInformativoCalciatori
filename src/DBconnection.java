@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DBconnection {
-    private static final String CONFIG_PATH = "../.config.properties";  // se non trova il file prova a scrivere il path assoluto
+    private static final String CONFIG_PATH = "/home/angelo/Documents/OO/Java/SistemaInformativoCalciatori/.config.properties";  // se non trova il file prova a scrivere il path assoluto
 
     public static Connection connect() {
         Connection connection = null;

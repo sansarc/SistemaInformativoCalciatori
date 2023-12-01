@@ -1,8 +1,5 @@
 package Calciatore;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Calciatore {
     private String nome, cognome;
     private String dataNascita, dataRitiro;

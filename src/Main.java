@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.table.DefaultTableModel;
 
 public class Main extends JFrame {
     List<Calciatore> calciatori = new ArrayList<>();
@@ -13,8 +12,8 @@ public class Main extends JFrame {
     private JComboBox<String> ruoliComboBox;
     private JLabel titleLabel;
     private JButton searchButton;
+    private JTable resultsTable;
     private JScrollPane tableScrollPane;
-    private DefaultTableModel model;
 
     public Main() {
         setContentPane(panel);
@@ -31,7 +30,7 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String ruolo = (String) ruoliComboBox.getSelectedItem();
-                Query query = new Query();
+                Query query = new Query(resultsTable);
                 calciatori = query.getCalciatoriByRuolo(ruolo);
                 for (Calciatore i : calciatori) System.out.println(i.getNome() + " " + i.getCognome());
             }
