@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -5,12 +6,12 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DBconnection {
-    private static final String CONFIG_PATH = "/home/angelo/Documents/OO/Java/SistemaInformativoCalciatori/.config.properties";  // se non trova il file prova a scrivere il path assoluto
+    private static final File CONFIG_FILE = new File(".config.properties");  
 
     public static Connection connect() {
         Connection connection = null;
 
-        try (FileInputStream input = new FileInputStream(CONFIG_PATH)) {
+        try (FileInputStream input = new FileInputStream(CONFIG_FILE.getAbsolutePath())) {
             Properties prop = new Properties();
             prop.load(input);
             String dbName = prop.getProperty("db.name");

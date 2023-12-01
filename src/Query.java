@@ -11,8 +11,7 @@ public class Query {
     public Query(JTable resultsTable) {
         this.resultsTable = resultsTable;
     }
-    public List<Calciatore> getCalciatoriByRuolo(String ruolo) {
-        List<Calciatore> calciatori = new ArrayList<>();
+    public boolean getCalciatoriByRuolo(String ruolo) {
         Connection connection = DBconnection.connect();
         String query = "SELECT nome, cognome FROM calciatore WHERE ruoli = ?";
 
@@ -49,6 +48,6 @@ public class Query {
             DBconnection.disconnect(connection);
         }
 
-        return calciatori;
+        return true;
     }
 }

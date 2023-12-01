@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main extends JFrame {
-    List<Calciatore> calciatori = new ArrayList<>();
     private JPanel panel;
     private JLabel ruoloLabel;
     private JComboBox<String> ruoliComboBox;
@@ -31,8 +30,7 @@ public class Main extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String ruolo = (String) ruoliComboBox.getSelectedItem();
                 Query query = new Query(resultsTable);
-                calciatori = query.getCalciatoriByRuolo(ruolo);
-                for (Calciatore i : calciatori) System.out.println(i.getNome() + " " + i.getCognome());
+                boolean state = query.getCalciatoriByRuolo(ruolo);
             }
         });
 
