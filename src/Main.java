@@ -1,0 +1,53 @@
+import Calciatore.*;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
+public class Main extends JFrame {
+    List<Calciatore> calciatori = new ArrayList<>();
+    private JPanel panel;
+    private JLabel ruoloLabel;
+    private JComboBox<String> ruoliComboBox;
+    private JLabel titleLabel;
+    private JButton searchButton;
+    private JScrollPane tableScrollPane;
+    private DefaultTableModel model;
+
+    public Main() {
+        setContentPane(panel);
+        setTitle("Sistema Informativo Calciatori");
+        pack();
+        setDefaultCloseOperation(HIDE_ON_CLOSE);     // TODO: change it to EXIT_ON_CLOSE
+        setLocationRelativeTo(null);
+        setVisible(true);
+
+        String[] ruoli = new String[] {"Seleziona un ruolo", "Forward", "Midfielder", "Defender", "Goalkeeper"};
+        for (String i : ruoli) ruoliComboBox.addItem(i);
+
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String ruolo = (String) ruoliComboBox.getSelectedItem();
+                Query query = new Query();
+                calciatori = query.getCalciatoriByRuolo(ruolo);
+                for (Calciatore i : calciatori) System.out.println(i.getNome() + " " + i.getCognome());
+            }
+        });
+
+        ruoliComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String ruolo = (String) ruoliComboBox.getSelectedItem();
+                searchButton.setEnabled(!ruolo.equals("Seleziona un ruolo"));
+            }
+        });
+    }
+
+
+    public static void main(String[] args) {
+        new Main();
+    }
+}
