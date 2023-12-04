@@ -1,6 +1,9 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.math.MathContext;
 
 public class Main extends JFrame {
     private JPanel panel;
@@ -18,6 +21,9 @@ public class Main extends JFrame {
     private JLabel ageLabel;
     private JTextField ageTextField;
     private JCheckBox retiredCheckBox;
+    private JLabel teamLabel;
+    private JTextField teamTextField;
+    private JComboBox<Character> ageComboBox;
 
     public Main() {
         setContentPane(panel);
@@ -29,9 +35,11 @@ public class Main extends JFrame {
 
         String[] positions = new String[] {"", "Forward", "Midfielder", "Defender", "Goalkeeper"};
         for (String i : positions) positionComboBox.addItem(i);
-        footComboBox.addItem("");
+        footComboBox.addItem("\0");
         footComboBox.addItem("Dx");
         footComboBox.addItem("Sx");
+        char[] ageMath = {'=', '>', '<'};
+        for (char i : ageMath) ageComboBox.addItem(i);
 
         searchButton.addActionListener(new ActionListener() {
             @Override
@@ -39,17 +47,36 @@ public class Main extends JFrame {
                 String position = (String) positionComboBox.getSelectedItem();
                 String name = nameTextField.getText();
                 String lastname = lastnameTextField.getText();
-                char foot = footComboBox.getSelectedItem().equals("Dx") ? 'D' : 'S';
+                char foot;
+                if (footComboBox.getSelectedItem().equals("Dx")) foot = 'D';
+                else if (footComboBox.getSelectedItem().equals("Sx")) foot = 'S';
+                else foot = '\0';
+                char ageMath = (char) ageComboBox.getSelectedItem();
                 String age = ageTextField.getText();
                 boolean isRetired = retiredCheckBox.isSelected();
+                System.out.println(isRetired);
+                String team = teamTextField.getText();
 
-                if (position.isBlank() && name.isBlank() && lastname.isBlank() && foot == '\0' && !isRetired) JOptionPane.showMessageDialog(Main.this, "Ricerca non valida, riprova.");
+                if (isFormEmpty(position, name, lastname, foot, age, isRetired, team)) JOptionPane.showMessageDialog(Main.this, "Ricerca non valida, riprova.");
                 else {
                     Query query = new Query(resultsTable);
-                    query.getSearch(name, lastname, age, position, foot, isRetired);        // TODO: aggiungere campo Squadra
+                    query.getSearch(name, lastname, ageMath, age, position, foot, isRetired, team);
                 }
             }
         });
+
+        resultsTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = resultsTable.rowAtPoint(e.getPoint());
+                int col = resultsTable.columnAtPoint(e.getPoint());
+                if (row >= 0 && col == 1) JOptionPane.showMessageDialog(Main.this, "Valore cliccato");
+            }
+        });
+    }
+
+    private boolean isFormEmpty(String position, String name, String lastname, char foot, String age, Boolean isRetired, String team) {
+        return (position.isBlank() && name.isBlank() && lastname.isBlank() && age.isBlank() && foot == '\0' && !isRetired && team.isBlank());
     }
 
     public static void main(String[] args) {
