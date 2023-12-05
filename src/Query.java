@@ -3,12 +3,12 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 public class Query {
-    private JTable resultsTable;
+    private final JTable resultsTable;
     public Query(JTable resultsTable) {
         this.resultsTable = resultsTable;
     }
 
-    public void getSearch(String name, String lastname, char ageMath, String age, String position, char foot, boolean isRetired, String team) {
+    public void queryTable(String name, String lastname, char ageMath, String age, String position, char foot, boolean isRetired, String team) {
         String query = getQuery(name, lastname, ageMath, age, position, foot, isRetired, team);
         Connection connection = DBconnection.connect();
 

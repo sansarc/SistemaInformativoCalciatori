@@ -5,6 +5,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.MathContext;
 
+// TODO: profilo militanza del giocatore quando si clicca sull'ID dalla tabella di ricerca
+// TODO: sistema login e profili
+// TODO: sistema inserimento e modifica dati in base al profilo
+
 public class Main extends JFrame {
     private JPanel panel;
     private JLabel positionLabel;
@@ -24,6 +28,8 @@ public class Main extends JFrame {
     private JLabel teamLabel;
     private JTextField teamTextField;
     private JComboBox<Character> ageComboBox;
+    private Profile profile;
+    private Query query;
 
     public Main() {
         setContentPane(panel);
@@ -54,13 +60,12 @@ public class Main extends JFrame {
                 char ageMath = (char) ageComboBox.getSelectedItem();
                 String age = ageTextField.getText();
                 boolean isRetired = retiredCheckBox.isSelected();
-                System.out.println(isRetired);
                 String team = teamTextField.getText();
 
                 if (isFormEmpty(position, name, lastname, foot, age, isRetired, team)) JOptionPane.showMessageDialog(Main.this, "Ricerca non valida, riprova.");
                 else {
-                    Query query = new Query(resultsTable);
-                    query.getSearch(name, lastname, ageMath, age, position, foot, isRetired, team);
+                    query = new Query(resultsTable);
+                    query.queryTable(name, lastname, ageMath, age, position, foot, isRetired, team);
                 }
             }
         });
@@ -70,7 +75,7 @@ public class Main extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int row = resultsTable.rowAtPoint(e.getPoint());
                 int col = resultsTable.columnAtPoint(e.getPoint());
-                if (row >= 0 && col == 1) JOptionPane.showMessageDialog(Main.this, "Valore cliccato");
+                if (row >= 0 && col == 0) profile = new Profile((int) resultsTable.getValueAt(row, col));
             }
         });
     }

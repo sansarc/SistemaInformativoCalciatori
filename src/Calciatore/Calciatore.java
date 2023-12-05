@@ -7,36 +7,22 @@ public class Calciatore {
     private int golFatti, golSubiti;
     private String features, ruoli;
 
-    /* public Calciatore(String nome, String cognome, String dataNascita, char piede, List<String> ruoli, List<Feature> features, int golFatti, int golSubiti, String dataRitiro) {
-        this.nome = nome;
-        this.cognome = cognome;
-        this.dataNascita = dataNascita;
-        this.piede = piede;
-        this.ruoli = ruoli;
-        this.features = features;
-        this.golFatti = golFatti;
-        this.golSubiti = golSubiti;
-        this.dataRitiro = dataRitiro;
-    } */
+    public void setNome(String s) {nome = s;}
+    public void setCognome(String s) {cognome = s;}
+    public void setDataNascita(String s) {dataNascita = s;}
+    public void setDataRitiro(String s) {dataRitiro = s;}
+    public void setPiede(char c) {piede = c;}
+    public void setGolFatti(int n) {golFatti = n;}
+    public void setGolSubiti(int n) {golSubiti = n;}
+    public void setRuolo(String s) {ruoli = s;}
 
-    public void setNome(String s) {
-        nome = s;
-    }
-    public void setCognome(String s) {
-        cognome = s;
-    }
-    // TODO: completa le altre set
-
-    public String getRuolo() {
-        return ruoli;
-    }
-    public String getNome() {
-        return nome;
-    }
-    public String getCognome() {
-        return cognome;
-    }
-    public String getFeatures() {
-        return features;
-    }
+    public String getRuolo() {return ruoli;}
+    public String getNome() {return nome;}
+    public String getCognome() {return cognome;}
+    public String getDataNascita() {return dataNascita;}
+    public String getDataRitiro() {return dataRitiro;}
+    public char getPiede() {return piede;}
+    public int getGolFatti() {return golFatti;}
+    public int getGolSubiti() {return golSubiti;}
+    public String getFeatures() {return features;}
 }
