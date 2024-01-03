@@ -75,7 +75,7 @@ public class Query {
 
     public PlayerTransfer queryPlayerProfile(int id) {
         Connection connection = DBconnection.connect();
-        String query = "SELECT DISTINCT players.*, teams.team_name, Player_Team.StartDate, calciatoresquadra.EndDate, STRING_AGG(DISTINCT feature.feature_name, ', ') AS feature_list FROM player JOIN Player_Team ON player.idPlayer = Player_team.idPlayer JOIN teams ON player_team.idTeam = teams.idTeam JOIN player_feature ON players.idPlayer = player_feature.idPlayer JOIN features ON features.Feature_Name = player_feature.idFeature WHERE players.idPlayer = ? GROUP BY players.idPlayer, teams.team_name, player_team.StartDate, player_team.EndDate ORDER BY player_team.startdate;";
+        String query = "SELECT DISTINCT players.*, teams.team_name, Player_Team.StartDate, player_team.EndDate, STRING_AGG(DISTINCT features.feature_name, ', ') AS feature_list FROM players JOIN Player_Team ON players.idPlayer = Player_team.idPlayer JOIN teams ON player_team.idTeam = teams.idTeam JOIN player_feature ON players.idPlayer = player_feature.idPlayer JOIN features ON features.Feature_Name = player_feature.idFeature WHERE players.idPlayer = ? GROUP BY players.idPlayer, teams.team_name, player_team.StartDate, player_team.EndDate ORDER BY player_team.startdate;";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
@@ -113,7 +113,7 @@ public class Query {
 
     public PlayerFeature queryPlayerFeature(int id) {
         Connection connection = DBconnection.connect();
-        String query = "SELECT feature_name, description, Type_feature  FROM features JOIN player_feature ON features.name = player_feature.feature_name JOIN players ON players.idPlayer = player_feature.idPlayer WHERE players.idPlayer = ?;";
+        String query = "SELECT feature_name, description, Type_feature  FROM features JOIN player_feature ON features.feature_name = player_feature.idFeature JOIN players ON players.idPlayer = player_feature.idPlayer WHERE players.idPlayer = ?;";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
             System.out.println(statement);
