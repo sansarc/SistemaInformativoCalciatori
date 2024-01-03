@@ -1,3 +1,5 @@
+package Pages;
+
 import Entity.*;
 import DB.Query;
 import javax.swing.*;

@@ -3,16 +3,16 @@ import java.util.List;
 
 public class QueryTools {
     public static String getQuery(String name, String lastname, char ageMath, String age, List<String> positions, char foot, boolean isRetired, String team) {
-        StringBuilder query = new StringBuilder("SELECT nome_calciatore, cognome, nome_squadra, calciatore.idcalciatore FROM calciatore LEFT JOIN calciatoresquadra ON calciatore.idcalciatore = calciatoresquadra.idcalciatore LEFT JOIN squadra ON calciatoresquadra.idsquadra = squadra.idsquadra WHERE");
+        StringBuilder query = new StringBuilder("SELECT player_name, lastname, team_name, players.idPlayer FROM players LEFT JOIN player_team ON players.idplayer = player_team.idPlayer LEFT JOIN teams ON player_team.idTeam = teams.idTeam WHERE");
         boolean conditionAND = false;
 
         if (!name.isBlank()) {
-            query.append(" LOWER(nome_calciatore) LIKE LOWER(?)");
+            query.append(" LOWER(player_name) LIKE LOWER(?)");
             conditionAND = true;
         }
         if (!lastname.isBlank()) {
             if (conditionAND) query.append(" AND");
-            query.append(" LOWER(cognome) LIKE LOWER(?)");
+            query.append(" LOWER(lastname) LIKE LOWER(?)");
             conditionAND = true;
         }
         if (!positions.isEmpty()) {
@@ -24,7 +24,7 @@ public class QueryTools {
         }
         if (!age.isBlank()) {
             if (conditionAND) query.append(" AND");
-            query.append(" EXTRACT(YEAR FROM CURRENT_DATE) - EXTRACT(YEAR FROM datanascita)").append(ageMath).append("?");
+            query.append(" EXTRACT(YEAR FROM CURRENT_DATE) - EXTRACT(YEAR FROM borndate)").append(ageMath).append("?");
             conditionAND = true;
         }
         if (foot != '\0') {
@@ -34,25 +34,25 @@ public class QueryTools {
         }
         if (!team.isBlank()) {
             if (conditionAND) query.append(" AND");
-            query.append(" LOWER(squadra.nome_squadra) LIKE LOWER(?)");
+            query.append(" LOWER(teams.team_name) LIKE LOWER(?)");
         }
         if (isRetired) {
             if (conditionAND) query.append(" AND");
-            query.append(" dataritiro IS NOT NULL AND calciatoresquadra.dataFine IS NOT NULL");
+            query.append(" dataritiro IS NOT NULL AND player_team.EndDate IS NOT NULL");
         } else {
-            query.append(" AND dataritiro IS NULL AND calciatoresquadra.dataFine IS NULL");
+            query.append(" AND dataritiro IS NULL AND player_team.EndDate IS NULL");
         }
 
-        query.append(" ORDER BY cognome;");
+        query.append(" ORDER BY lastname;");
         return query.toString();
     }
 
     public static String updateColumnName(String columnName) {
         return switch (columnName) {
             case "idcalciatore" -> "";
-            case "nome_calciatore" -> "Name";
-            case "cognome" -> "Last Name";
-            case "nome_squadra" -> "Team";
+            case "player_name" -> "Name";
+            case "lastname" -> "Last Name";
+            case "team_name" -> "Team";
             default -> columnName;
         };
     }

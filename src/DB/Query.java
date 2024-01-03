@@ -1,11 +1,12 @@
 package DB;
 
 import Entity.*;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 public class Query {
     private JTable resultsTable;
@@ -13,14 +14,15 @@ public class Query {
     private Team team;
     private PlayerTransfer playerTransfer;
     private PlayerFeature playerFeature;
-    private Connection connection;
-
-    public Query() {}
-    public Query(JTable resultsTable) {this.resultsTable = resultsTable;}
+    public Query() { }
+    public Query(JTable resultsTable)
+    {
+        this.resultsTable = resultsTable;
+    }
 
     public List<Integer> queryPlayers(String name, String lastname, char ageMath, String age, List<String> positions, char foot, boolean isRetired, String team) {
-        String query = QueryTools.getQuery(name, lastname, ageMath, age, positions, foot, isRetired, team);
         Connection connection = DBconnection.connect();
+        String query = QueryTools.getQuery(name, lastname, ageMath, age, positions, foot, isRetired, team);
         List<Integer> ids = new ArrayList<>();
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -72,8 +74,8 @@ public class Query {
     }
 
     public PlayerTransfer queryPlayerProfile(int id) {
-        connection = DBconnection.connect();
-        String query = "SELECT DISTINCT calciatore.*, squadra.nome_squadra, calciatoresquadra.dataInizio, calciatoresquadra.dataFine, STRING_AGG(DISTINCT feature.nome_feature, ', ') AS lista_feature FROM calciatore JOIN calciatoresquadra ON calciatore.idcalciatore = calciatoresquadra.idcalciatore JOIN squadra ON calciatoresquadra.idsquadra = squadra.idsquadra JOIN calciatorefeature ON calciatore.idcalciatore = calciatorefeature.idcalciatore JOIN feature ON feature.idfeature = calciatorefeature.idfeature WHERE calciatore.idcalciatore = ? GROUP BY calciatore.idcalciatore, squadra.nome_squadra, calciatoresquadra.dataInizio, calciatoresquadra.dataFine ORDER BY calciatoresquadra.datainizio;";
+        Connection connection = DBconnection.connect();
+        String query = "SELECT DISTINCT players.*, teams.team_name, Player_Team.StartDate, calciatoresquadra.EndDate, STRING_AGG(DISTINCT feature.feature_name, ', ') AS feature_list FROM player JOIN Player_Team ON player.idPlayer = Player_team.idPlayer JOIN teams ON player_team.idTeam = teams.idTeam JOIN player_feature ON players.idPlayer = player_feature.idPlayer JOIN features ON features.Feature_Name = player_feature.idFeature WHERE players.idPlayer = ? GROUP BY players.idPlayer, teams.team_name, player_team.StartDate, player_team.EndDate ORDER BY player_team.startdate;";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
@@ -110,8 +112,8 @@ public class Query {
     }
 
     public PlayerFeature queryPlayerFeature(int id) {
-        String query = "SELECT nome_feature, descrizione, type FROM feature JOIN calciatorefeature ON feature.idfeature = calciatorefeature.idfeature JOIN calciatore ON calciatore.idcalciatore = calciatorefeature.idcalciatore WHERE calciatore.idcalciatore = ?;";
-
+        Connection connection = DBconnection.connect();
+        String query = "SELECT feature_name, description, Type_feature  FROM features JOIN player_feature ON features.name = player_feature.feature_name JOIN players ON players.idPlayer = player_feature.idPlayer WHERE players.idPlayer = ?;";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
             System.out.println(statement);
@@ -135,4 +137,62 @@ public class Query {
 
         return playerFeature;
     }
+    public char Login(String username, String password) {
+        User usr = SelectUser(username, password);
+        if(usr == null)
+            return '1';
+        else
+            return usr.getType();
+    }
+    public boolean CreateUser(String username, String password) {
+        var respSelect = this.SelectUser(username, "");
+        if(respSelect != null)
+        {
+            return false;
+        }
+        boolean ret = false;
+        Connection connection = DBconnection.connect();
+        String query = "INSERT INTO SIC_Users(email, pwd, type_user) VALUES (?, ?, 'U');";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, username);
+            statement.setString(2, password);
+            System.out.println(statement);
+            statement.executeUpdate();
+            DBconnection.disconnect(connection);
+            respSelect = this.SelectUser(username, password);
+            ret = respSelect != null;
+        } catch (SQLException se) {
+            DBconnection.disconnect(connection);
+        }
+        return ret;
+    }
+
+    private User SelectUser(String username, String password)
+    {
+        User usr = null;
+        Connection connection = DBconnection.connect();
+        String query = "SELECT email, type_user FROM SIC_Users WHERE email = ?";
+        if(password.isBlank())
+            query += ";";
+        else
+            query += " AND pwd = ?;";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, username);
+            if(! password.isBlank())
+                statement.setString(2, password);
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            if(rs.next()) {
+             usr = new User();
+             usr.setEmail(rs.getString(1));
+             usr.setType(rs.getString(2).charAt(0));
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } finally {
+            DBconnection.disconnect(connection);
+        }
+        return usr;
+    }
+
 }

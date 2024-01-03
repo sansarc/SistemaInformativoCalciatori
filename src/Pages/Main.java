@@ -1,7 +1,8 @@
+package Pages;
+
 import DB.Query;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -36,17 +37,23 @@ public class Main extends JFrame {
     private JCheckBox defenderCheckBox;
     private JCheckBox goalkeeperCheckBox;
     private JButton clearButton;
+    private JPanel adminPanel;
+    private JButton addPlayerButton;
+    private JButton button2;
+    private JButton editUsersButton;
+    private JButton addTeamButton;
+    private JButton button5;
     private Query query;
     List<Integer> ids;
 
-    public Main() {
+    public Main(char user_type) {
         setContentPane(panel);
         setTitle("Sistema Informativo Calciatori");
         setSize(1100, 600);
-        setDefaultCloseOperation(HIDE_ON_CLOSE);     // TODO: cambia a EXIT_ON_CLOSE
+        setDefaultCloseOperation(EXIT_ON_CLOSE);     // TODO: cambia a HIDE_ON_CLOSE
         setLocationRelativeTo(null);
         setVisible(true);
-
+        adminPanel.setVisible(user_type == 'A');
         String[] footOpt = {"\0", "Left", "Right", "Ambidextrous"};
         for (String i : footOpt) footComboBox.addItem(i);
         char[] ageOpt = {'=', '>', '<'};
@@ -122,7 +129,4 @@ public class Main extends JFrame {
         return code == 0;
     }
 
-    public static void main(String[] args) {
-        new Main();
-    }
 }
