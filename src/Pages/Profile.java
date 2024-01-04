@@ -41,8 +41,26 @@ public class Profile extends JFrame {
         setTitle(player.getName() + " " + player.getLastName());
         imageLabel.setIcon(new ImageIcon(player.getImage()));
         playerNameLabel.setText(playerNameLabel.getText() + " " + player.getName() + " " + player.getLastName());
-        birthDateLabel.setText(birthDateLabel.getText() + " " + player.getDateOfBirth() + " (" + player.getAge(true) + ")");
-        positionLabel.setText(positionLabel.getText() + " " + player.getPosition());
+        birthDateLabel.setText(birthDateLabel.getText() + " " + player.getDateOfBirth().toString().substring(8, 10) + "/" + player.getDateOfBirth().toString().substring(5, 7)  + "/" + player.getDateOfBirth().toString().substring(0, 4) + " (" + player.getAge(true) + ")");
+        var positions = player.getPosition().split(",");
+        for(var pst : positions)
+        {
+            switch(pst)
+            {
+                case "G":
+                    positionLabel.setText(positionLabel.getText() + " Goalkeeper");
+                    break;
+                case "D":
+                    positionLabel.setText(positionLabel.getText() + " Defender");
+                    break;
+                case "M":
+                    positionLabel.setText(positionLabel.getText() + " Midfielder");
+                    break;
+                case "F":
+                    positionLabel.setText(positionLabel.getText() + " Forward");
+                    break;
+            }
+        }
         goalsLabel.setText(goalsLabel.getText() + " " + player.getGoals());
         if (player.getPosition().contains("Goalkeeper")) {
             goalsConcededLabel.setText(goalsConcededLabel.getText() + " " + player.getGoalsConceded());
@@ -71,9 +89,13 @@ public class Profile extends JFrame {
 
         for (int i = 0; i < playerTransfer.getStartList().size(); i++) {
             String left = "";
-            if (i > 0) left = playerTransfer.getTeam(i-1).getName();
+            if (i > 0) {
+                left = playerTransfer.getTeam(i - 1).getName();
+                if(!left.isBlank())
+                    left = left.substring(5, 7) + "/" + left.substring(8, 10) + "/" + left.substring(0, 4);
+            }
             Object[] rowData = {
-                    playerTransfer.getStart(i),
+                    playerTransfer.getStart(i).toString().substring(5, 7) + "/" + playerTransfer.getStart(i).toString().substring(8, 10) + "/" + playerTransfer.getStart(i).toString().substring(0, 4),
                     left,
                     playerTransfer.getTeam(i).getName()
             };
