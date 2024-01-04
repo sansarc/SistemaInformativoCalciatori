@@ -24,7 +24,7 @@ public class QueryTools {
         }
         if (!age.isBlank()) {
             if (conditionAND) query.append(" AND");
-            query.append(" DATEDIFF(CURRENT_DATE, borndate) ").append(ageMath).append("?");
+            query.append(" EXTRACT(YEAR FROM AGE(CURRENT_DATE, borndate)) ").append(ageMath).append("?");
             conditionAND = true;
         }
         if (foot != '\0') {
