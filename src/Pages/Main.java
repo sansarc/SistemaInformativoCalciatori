@@ -106,6 +106,12 @@ public class Main extends JFrame {
                 ageComboBox.setSelectedIndex(0);
             }
         });
+        addPlayerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AddPlayer();
+            }
+        });
     }
 
     private List<String> getCheckedPositions() {

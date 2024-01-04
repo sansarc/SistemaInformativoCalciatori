@@ -70,6 +70,7 @@ public class Login extends JFrame {
                     JOptionPane.showMessageDialog(null, "Email already associated with a user!", "Creazione Utente", JOptionPane.ERROR_MESSAGE);
             }
         });
+
     }
 
     public static void main(String[] args)

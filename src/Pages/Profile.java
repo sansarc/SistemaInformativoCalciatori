@@ -41,7 +41,7 @@ public class Profile extends JFrame {
         setTitle(player.getName() + " " + player.getLastName());
         imageLabel.setIcon(new ImageIcon(player.getImage()));
         playerNameLabel.setText(playerNameLabel.getText() + " " + player.getName() + " " + player.getLastName());
-        birthDateLabel.setText(birthDateLabel.getText() + " " + player.getDateOfBirth() + " (" + player.getAge() + ")");
+        birthDateLabel.setText(birthDateLabel.getText() + " " + player.getDateOfBirth() + " (" + player.getAge(true) + ")");
         positionLabel.setText(positionLabel.getText() + " " + player.getPosition());
         goalsLabel.setText(goalsLabel.getText() + " " + player.getGoals());
         if (player.getPosition().contains("Goalkeeper")) {

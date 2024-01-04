@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Query {
@@ -194,5 +195,9 @@ public class Query {
         }
         return usr;
     }
-
+    public Player InsertPlayer(Player playerRequest)
+    {
+        var resp = queryPlayers(playerRequest.getName(), playerRequest.getLastName(),'\0', String.valueOf(playerRequest.getAge(false)), Arrays.stream(((playerRequest.getPosition()).split(","))).toList(),playerRequest.getFoot(), false, null );
+        return null;
+    }
 }
