@@ -15,9 +15,11 @@ public class Query {
     private Team team;
     private PlayerTransfer playerTransfer;
     private PlayerFeature playerFeature;
-    public Query() { }
-    public Query(JTable resultsTable)
-    {
+
+    public Query() {
+    }
+
+    public Query(JTable resultsTable) {
         this.resultsTable = resultsTable;
     }
 
@@ -60,7 +62,7 @@ public class Query {
                 }
                 columnName = metaData.getColumnName(cols);
                 ids.add(rs.getInt(columnName));
-                rowData[cols-1] = "<html><u>full profile</u></html>"; // Note: Use cols instead of cols - 1
+                rowData[cols - 1] = "<html><u>full profile</u></html>"; // Note: Use cols instead of cols - 1
                 tableModel.addRow(rowData);
             }
             resultsTable.setModel(tableModel);
@@ -138,17 +140,18 @@ public class Query {
 
         return playerFeature;
     }
+
     public char Login(String username, String password) {
         User usr = SelectUser(username, password);
-        if(usr == null)
+        if (usr == null)
             return '1';
         else
             return usr.getType();
     }
+
     public boolean CreateUser(String username, String password) {
         var respSelect = this.SelectUser(username, "");
-        if(respSelect != null)
-        {
+        if (respSelect != null) {
             return false;
         }
         boolean ret = false;
@@ -168,25 +171,24 @@ public class Query {
         return ret;
     }
 
-    private User SelectUser(String username, String password)
-    {
+    private User SelectUser(String username, String password) {
         User usr = null;
         Connection connection = DBconnection.connect();
         String query = "SELECT email, type_user FROM SIC_Users WHERE email = ?";
-        if(password.isBlank())
+        if (password.isBlank())
             query += ";";
         else
             query += " AND pwd = ?;";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, username);
-            if(! password.isBlank())
+            if (!password.isBlank())
                 statement.setString(2, password);
             System.out.println(statement);
             var rs = statement.executeQuery();
-            if(rs.next()) {
-             usr = new User();
-             usr.setEmail(rs.getString(1));
-             usr.setType(rs.getString(2).charAt(0));
+            if (rs.next()) {
+                usr = new User();
+                usr.setEmail(rs.getString(1));
+                usr.setType(rs.getString(2).charAt(0));
             }
         } catch (SQLException se) {
             se.printStackTrace();
@@ -195,9 +197,15 @@ public class Query {
         }
         return usr;
     }
-    public Player InsertPlayer(Player playerRequest)
-    {
-        var resp = queryPlayers(playerRequest.getName(), playerRequest.getLastName(),'\0', String.valueOf(playerRequest.getAge(false)), Arrays.stream(((playerRequest.getPosition()).split(","))).toList(),playerRequest.getFoot(), false, null );
+
+    public Player InsertPlayer(Player playerRequest) {
+        var resp = queryPlayers(playerRequest.getName(), playerRequest.getLastName(), '\0', String.valueOf(playerRequest.getAge(false)), Arrays.stream(((playerRequest.getPosition()).split(","))).toList(), playerRequest.getFoot(), false, null);
+        if (!resp.isEmpty()) {
+            int scelta = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
+            if (scelta == JOptionPane.NO_OPTION)
+                return null;
+        }
         return null;
     }
+
 }
