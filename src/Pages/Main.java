@@ -77,7 +77,7 @@ public class Main extends JFrame {
 
                 if (showMessagePanel(Main.this, isFormOk(positions, name, lastname, foot, age, isRetired, team))) {
                     query = new Query(resultsTable);
-                    ids = query.queryPlayers(name, lastname, ageMath, age, positions, foot, isRetired, team);
+                    ids = query.queryPlayers(name, lastname, ageMath, age, positions, foot, isRetired, team, true);
                 }
             }
         });
@@ -116,10 +116,10 @@ public class Main extends JFrame {
 
     private List<String> getCheckedPositions() {
         List<String> positions = new ArrayList<>();
-        if (forwardCheckBox.isSelected()) positions.add("Forward");
-        if (midfielderCheckBox.isSelected()) positions.add("Midfielder");
-        if (defenderCheckBox.isSelected()) positions.add("Defender");
-        if (goalkeeperCheckBox.isSelected()) positions.add("Goalkeeper");
+        if (forwardCheckBox.isSelected()) positions.add("F");
+        if (midfielderCheckBox.isSelected()) positions.add("M");
+        if (defenderCheckBox.isSelected()) positions.add("D");
+        if (goalkeeperCheckBox.isSelected()) positions.add("G");
         return positions;
     }
 

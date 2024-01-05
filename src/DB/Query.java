@@ -23,7 +23,7 @@ public class Query {
         this.resultsTable = resultsTable;
     }
 
-    public List<Integer> queryPlayers(String name, String lastname, char ageMath, String age, List<String> positions, char foot, boolean isRetired, String team) {
+    public List<Integer> queryPlayers(String name, String lastname, char ageMath, String age, List<String> positions, char foot, boolean isRetired, String team, boolean isFromMain) {
         Connection connection = DBconnection.connect();
         String query = QueryTools.getQuery(name, lastname, ageMath, age, positions, foot, isRetired, team);
         List<Integer> ids = new ArrayList<>();
@@ -65,10 +65,13 @@ public class Query {
                 rowData[cols - 1] = "<html><u>full profile</u></html>"; // Note: Use cols instead of cols - 1
                 tableModel.addRow(rowData);
             }
-            resultsTable.setModel(tableModel);
+            if(isFromMain)
+                resultsTable.setModel(tableModel);
 
         } catch (SQLException se) {
             se.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         } finally {
             DBconnection.disconnect(connection);
         }
@@ -199,7 +202,7 @@ public class Query {
     }
 
     public Player InsertPlayer(Player playerRequest) {
-        var resp = queryPlayers(playerRequest.getName(), playerRequest.getLastName(), '\0', String.valueOf(playerRequest.getAge(false)), Arrays.stream(((playerRequest.getPosition()).split(","))).toList(), playerRequest.getFoot(), false, null);
+        var resp = queryPlayers(playerRequest.getName(), playerRequest.getLastName(), '=', String.valueOf(playerRequest.getAge(false)), Arrays.stream(((playerRequest.getPosition()).split(","))).toList(), playerRequest.getFoot(), false, "", false);
         if (!resp.isEmpty()) {
             int scelta = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
             if (scelta == JOptionPane.NO_OPTION)
