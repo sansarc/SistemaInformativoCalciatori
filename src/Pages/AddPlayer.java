@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 public class AddPlayer extends JFrame {
     private JTextField playerName;
@@ -18,7 +17,7 @@ public class AddPlayer extends JFrame {
     private JCheckBox goalkeaperCheckBox;
     private JCheckBox defenderCheckBox;
     private JTextField playerLastName;
-    private JTextField playerBornDate_s;
+    private JTextField playerBirthDate_s;
     private JPanel panel;
     private JButton insertButton;
     private JSpinner goalScoredSpinner;
@@ -88,10 +87,10 @@ public class AddPlayer extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 char foot = '\0';
-                Date bornDate = new Date();
+                Date birthdate = new Date();
                 int goalScorer;
                 int goalConceded;
-                if(playerName.getText().isBlank() || playerLastName.getText().isBlank() || (!forwardCheckBox.isSelected() && !midfenderCheckBox.isSelected() && !defenderCheckBox.isSelected() && !goalkeaperCheckBox.isSelected() ) || playerBornDate_s.getText().isBlank() || footComboBox.getSelectedItem().equals('\0') ) {
+                if(playerName.getText().isBlank() || playerLastName.getText().isBlank() || (!forwardCheckBox.isSelected() && !midfenderCheckBox.isSelected() && !defenderCheckBox.isSelected() && !goalkeaperCheckBox.isSelected() ) || playerBirthDate_s.getText().isBlank() || footComboBox.getSelectedItem().equals('\0') ) {
                     JOptionPane.showMessageDialog(null, "Errore, tutti i campi sono obbligatori!", "Errore", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -100,7 +99,7 @@ public class AddPlayer extends JFrame {
                     try
                     {
                         SimpleDateFormat varDate = new SimpleDateFormat("MM/dd/yyyy");
-                        bornDate = varDate.parse(playerBornDate_s.getText());
+                        birthdate = varDate.parse(playerBirthDate_s.getText());
                     }
                     catch (Exception exception)
                     {
@@ -171,7 +170,7 @@ public class AddPlayer extends JFrame {
                         }
                     }
                 }
-                Player playerRequest = new Player(playerName.getText(), playerLastName.getText(), positions, bornDate, null, foot, goalScorer, goalConceded);
+                Player playerRequest = new Player(playerName.getText(), playerLastName.getText(), positions, birthdate, null, foot, goalScorer, goalConceded);
                 var query = new Query();
                 Player playerResponse = query.InsertPlayer(playerRequest);
             }

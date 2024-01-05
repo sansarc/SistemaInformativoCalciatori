@@ -18,18 +18,18 @@ public class QueryTools {
         if (!positions.isEmpty()) {
             for (int i = 0; i < positions.size(); i++) {
                 if (conditionAND) query.append(" AND");
-                query.append(" ruoli LIKE ?");
+                query.append(" positions LIKE ?");
                 conditionAND = true;
             }
         }
         if (!age.isBlank()) {
             if (conditionAND) query.append(" AND");
-            query.append(" EXTRACT(YEAR FROM AGE(CURRENT_DATE, borndate)) ").append(ageMath).append("?");
+            query.append(" EXTRACT(YEAR FROM AGE(CURRENT_DATE, birthdate)) ").append(ageMath).append("?");
             conditionAND = true;
         }
         if (foot != '\0') {
             if (conditionAND) query.append(" AND");
-            query.append(" piede = ?");
+            query.append(" foot = ?");
             conditionAND = true;
         }
         if (!team.isBlank()) {
@@ -38,9 +38,9 @@ public class QueryTools {
         }
         if (isRetired) {
             if (conditionAND) query.append(" AND");
-            query.append(" dataritiro IS NOT NULL AND player_team.EndDate IS NOT NULL");
+            query.append(" retirementDate  IS NOT NULL AND player_team.EndDate IS NOT NULL");
         } else {
-            query.append(" AND dataritiro IS NULL AND player_team.EndDate IS NULL");
+            query.append(" AND retirementDate  IS NULL AND player_team.EndDate IS NULL");
         }
 
         query.append(" ORDER BY lastname;");
