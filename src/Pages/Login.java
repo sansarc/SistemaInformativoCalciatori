@@ -5,72 +5,79 @@ import DB.Query;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JOptionPane;
 
 // TODO: profilo militanza del giocatore quando si clicca sull'ID dalla tabella di ricerca
 // TODO: sistema login e profili
 // TODO: sistema inserimento e modifica dati in base al profilo
+// TODO: logout button?
 
 public class Login extends JFrame {
     private JPanel panel;
     private JPasswordField password;
     private JTextField username;
-    private JButton CreateButton;
-    private JButton LoginButton;
+    private JButton signupButton;
+    private JButton loginButton;
     private Query query;
 
     public Login() {
         setContentPane(panel);
-        setTitle("Sistema Informativo Calciatori");
-        setSize(1100, 600);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);     // HIDE_ON_CLOSE
+        setTitle("Log In SIC");
+        setSize(220, 200);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
-        LoginButton.addActionListener(new ActionListener() {
+        loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String u_name = username.getText();
                 String pwd = password.getText();
-                if(u_name.isBlank() || pwd.isBlank())
-                {
-                    JOptionPane.showMessageDialog(null, "Errore, tutti i campi sono obbligatori!", "Errore", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+                if (blankCredentials(u_name, pwd)) return;
                 query = new Query();
                 var user_type = query.Login(u_name, pwd);
-                if(user_type == '0')
+                if (user_type == '0')
                 {
-                    JOptionPane.showMessageDialog(null, "Errore interno!", "Errore", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Internal Error!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                else if(user_type == '1')
+                else if (user_type == '1')
                 {
-                    JOptionPane.showMessageDialog(null, "Credenziali errate!", "Errore", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Wrong Credentials!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else
                 {
-                    new Main(user_type);
+                    new Main(user_type, u_name);
                     dispose();
                 }
             }
         });
-        CreateButton.addActionListener(new ActionListener() {
+        signupButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String u_name = username.getText();
                 String pwd = password.getText();
+                if (blankCredentials(u_name, pwd)) return;
                 query = new Query();
                 var resultCreateUser = query.CreateUser(u_name, pwd);
                 if(resultCreateUser)
-                    JOptionPane.showMessageDialog(null, "User created successfully!", "User creation", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "User created successfully.", "Sign up", JOptionPane.INFORMATION_MESSAGE);
                 else
-                    JOptionPane.showMessageDialog(null, "Email already associated with a user!", "Creazione Utente", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "This email is already in use. Please choose a different one.", "Sign up", JOptionPane.ERROR_MESSAGE);
             }
         });
 
+    }
+
+    private boolean blankCredentials(String u_name, String pwd) {
+        if (u_name.isBlank() || pwd.isBlank()) {
+            String message = "";
+            if (u_name.isBlank() && pwd.isBlank()) message = "Please enter your email address and password.";
+            else if (u_name.isBlank()) message = "Please enter your email address.";
+            else message = "Please enter your password.";
+            JOptionPane.showMessageDialog(null, message, "Sign up", JOptionPane.WARNING_MESSAGE);
+            return true;
+        }
+
+        return false;
     }
 
     public static void main(String[] args)
@@ -78,3 +85,4 @@ public class Login extends JFrame {
         new Login();
     }
 }
+

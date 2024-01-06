@@ -77,7 +77,7 @@
               <text value="First Name"/>
             </properties>
           </component>
-          <component id="8b7f0" class="javax.swing.JTextField" binding="playerBirthDate_s">
+          <component id="8b7f0" class="javax.swing.JTextField" binding="playerBornDate_s">
             <constraints>
               <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -91,7 +91,7 @@
             </constraints>
             <properties>
               <font style="1"/>
-              <text value="Birth date (mm/dd/yyyy)"/>
+              <text value="Born date (mm/dd/yyyy)"/>
             </properties>
           </component>
           <grid id="857ab" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

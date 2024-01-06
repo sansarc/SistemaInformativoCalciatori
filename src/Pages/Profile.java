@@ -41,7 +41,7 @@ public class Profile extends JFrame {
         setTitle(player.getName() + " " + player.getLastName());
         imageLabel.setIcon(new ImageIcon(player.getImage()));
         playerNameLabel.setText(playerNameLabel.getText() + " " + player.getName() + " " + player.getLastName());
-        birthDateLabel.setText(birthDateLabel.getText() + " " + player.getDateOfBirth().toString().substring(5, 7) + "/" + player.getDateOfBirth().toString().substring(8, 10)  + "/" + player.getDateOfBirth().toString().substring(0, 4) + " (" + player.getAge(true) + ")");
+        birthDateLabel.setText(birthDateLabel.getText() + " " + player.getBirthDate().toString().substring(5, 7) + "/" + player.getBirthDate().toString().substring(8, 10)  + "/" + player.getBirthDate().toString().substring(0, 4) + " (" + player.getAge(true) + ")");
         var positions = player.getPosition().split(",");
         for(var pst : positions)
         {

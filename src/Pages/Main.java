@@ -13,6 +13,7 @@ import java.util.List;
 // TODO: profilo militanza del giocatore quando si clicca sull'ID dalla tabella di ricerca
 // TODO: sistema login e profili
 // TODO: sistema inserimento e modifica dati in base al profilo
+// TODO: per identificare il login nel Main, aggiungere "Ciao, utente!"?. Si deve passare come argomento anche il nome utente nella classe
 
 public class Main extends JFrame {
     private JPanel panel;
@@ -43,17 +44,20 @@ public class Main extends JFrame {
     private JButton editUsersButton;
     private JButton addTeamButton;
     private JButton button5;
+    private JLabel userGreetLabel;
+    private JButton logoutButton;
     private Query query;
     List<Integer> ids;
 
-    public Main(char user_type) {
+    public Main(char user_type, String username) {
         setContentPane(panel);
         setTitle("Sistema Informativo Calciatori");
         setSize(1100, 600);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);     // TODO: cambia a HIDE_ON_CLOSE
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
         adminPanel.setVisible(user_type == 'A');
+        userGreetLabel.setText("<html> Hi, <b>" + username + "</b>! </html>");
         String[] footOpt = {"\0", "Left", "Right", "Ambidextrous"};
         for (String i : footOpt) footComboBox.addItem(i);
         char[] ageOpt = {'=', '>', '<'};
@@ -110,6 +114,13 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new AddPlayer();
+            }
+        });
+        logoutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Login();
+                dispose();
             }
         });
     }

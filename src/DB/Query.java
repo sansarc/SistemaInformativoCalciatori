@@ -94,7 +94,7 @@ public class Query {
                 if (player.getName() == null) {
                     player.setName(rs.getString(2));
                     player.setLastName(rs.getString(3));
-                    player.setDateOfBirth(rs.getDate(4));
+                    player.setBirthDate(rs.getDate(4));
                     player.setFoot(rs.getString(5).charAt(0));
                     player.setRetirementDate(rs.getDate(6));
                     player.setGoals(rs.getInt(7));

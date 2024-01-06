@@ -7,19 +7,11 @@ public class User {
     {
         return email;
     }
-    public char getType()
-    {
-
-        return type;
-    }
+    public char getType() {return type;}
     public void setEmail(String e)
     {
         email = e;
     }
-    public void setType(char t)
-    {
-
-        type = t;
-    }
+    public void setType(char t) {type = t;}
 
 }

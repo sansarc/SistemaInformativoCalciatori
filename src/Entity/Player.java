@@ -1,14 +1,12 @@
 package Entity;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.Year;
-import java.time.YearMonth;
 import java.util.Base64;
 import java.util.Date;
 
 public class Player {
     private String name, lastName, position;
-    private Date dateOfBirth, retirementDate;
+    private Date birthDate, retirementDate;
     private char foot;
     private int goals, goalsConceded;
     private byte[] image;
@@ -18,7 +16,7 @@ public class Player {
         name = _name;
         lastName = _lastName;
         position = _position;
-        dateOfBirth = _dateOfBirth;
+        birthDate = _dateOfBirth;
         retirementDate = _retirementDate;
         foot = _foot;
         goals = _goals;
@@ -29,8 +27,8 @@ public class Player {
         name = s;}
     public void setLastName(String s) {
         lastName = s;}
-    public void setDateOfBirth(Date s) {
-        dateOfBirth = s;}
+    public void setBirthDate(Date s) {
+        birthDate = s;}
     public void setRetirementDate(Date s) {
         retirementDate = s;}
     public void setFoot(char c) {
@@ -46,7 +44,7 @@ public class Player {
     public String getPosition() {return position;}
     public String getName() {return name;}
     public String getLastName() {return lastName;}
-    public Date getDateOfBirth() {return dateOfBirth;}
+    public Date getBirthDate() {return birthDate;}
     public Date getRetirementDate() {return retirementDate;}
     public char getFoot() {return foot;}
     public String getFootString() {
@@ -64,16 +62,16 @@ public class Player {
         int year_difference = 0;
         if(from_db)
         {
-            birthMonth = Integer.parseInt(getDateOfBirth().toString().substring(5, 7));
-            dayOfBirth = Integer.parseInt(getDateOfBirth().toString().substring(8, 10));
-            year_difference = ( Year.now().getValue() - Integer.parseInt(getDateOfBirth().toString().substring(0, 4)) );
+            birthMonth = Integer.parseInt(getBirthDate().toString().substring(5, 7));
+            dayOfBirth = Integer.parseInt(getBirthDate().toString().substring(8, 10));
+            year_difference = ( Year.now().getValue() - Integer.parseInt(getBirthDate().toString().substring(0, 4)) );
         }
         else
         {
-            String BirthDate_s = getDateOfBirth().toString();
+            String BirthDate_s = getBirthDate().toString();
             birthMonth = toMonthNumber(BirthDate_s.substring(4, 7));
             dayOfBirth = Integer.parseInt(BirthDate_s.substring(8, 10));
-            year_difference = ( Year.now().getValue() - Integer.parseInt(BirthDate_s.substring(getDateOfBirth().toString().length() - 4, BirthDate_s.length())) );
+            year_difference = ( Year.now().getValue() - Integer.parseInt(BirthDate_s.substring(getBirthDate().toString().length() - 4, BirthDate_s.length())) );
         }
 
         if(actualDate.getMonth().getValue() == birthMonth)
