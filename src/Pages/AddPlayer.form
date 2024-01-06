@@ -24,12 +24,12 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="13f6e" class="javax.swing.JCheckBox" binding="midfenderCheckBox" default-binding="true">
+              <component id="13f6e" class="javax.swing.JCheckBox" binding="midfielderCheckBox" default-binding="true">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Midfender"/>
+                  <text value="Midfielder"/>
                 </properties>
               </component>
               <component id="48571" class="javax.swing.JCheckBox" binding="forwardCheckBox" default-binding="true">
@@ -58,12 +58,12 @@
                   </component>
                 </children>
               </grid>
-              <component id="d10bb" class="javax.swing.JCheckBox" binding="goalkeaperCheckBox" default-binding="true">
+              <component id="d10bb" class="javax.swing.JCheckBox" binding="goalkeeperCheckBox" default-binding="true">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Goalkeaper"/>
+                  <text value="Goalkeeper"/>
                 </properties>
               </component>
             </children>

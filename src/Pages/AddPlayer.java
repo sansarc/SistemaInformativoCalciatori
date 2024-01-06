@@ -12,9 +12,9 @@ import java.util.Date;
 public class AddPlayer extends JFrame {
     private JTextField playerName;
     private JComboBox footComboBox;
-    private JCheckBox midfenderCheckBox;
+    private JCheckBox midfielderCheckBox;
     private JCheckBox forwardCheckBox;
-    private JCheckBox goalkeaperCheckBox;
+    private JCheckBox goalkeeperCheckBox;
     private JCheckBox defenderCheckBox;
     private JTextField playerLastName;
     private JTextField playerBirthDate_s;
@@ -33,19 +33,19 @@ public class AddPlayer extends JFrame {
         goalConcededSpinner.setEnabled(false);
         String[] footOpt = {"\0", "Left", "Right", "Ambidextrous"};
         for (String i : footOpt) footComboBox.addItem(i);
-        goalkeaperCheckBox.addActionListener(new ActionListener() {
+        goalkeeperCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                if(goalkeaperCheckBox.isSelected())
+                if(goalkeeperCheckBox.isSelected())
                 {
                     goalConcededSpinner.setEnabled(true);
 
                     forwardCheckBox.setEnabled(false);
                     forwardCheckBox.setSelected(false);
 
-                    midfenderCheckBox.setEnabled(false);
-                    midfenderCheckBox.setSelected(false);
+                    midfielderCheckBox.setEnabled(false);
+                    midfielderCheckBox.setSelected(false);
 
                     defenderCheckBox.setEnabled(false);
                     defenderCheckBox.setSelected(false);
@@ -56,7 +56,7 @@ public class AddPlayer extends JFrame {
                     goalConcededSpinner.setValue(0);
 
                     forwardCheckBox.setEnabled(true);
-                    midfenderCheckBox.setEnabled(true);
+                    midfielderCheckBox.setEnabled(true);
                     defenderCheckBox.setEnabled(true);
                 }
 
@@ -69,7 +69,7 @@ public class AddPlayer extends JFrame {
                 verify_roles();
             }
         });
-        midfenderCheckBox.addActionListener(new ActionListener() {
+        midfielderCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e)
             {
@@ -90,7 +90,7 @@ public class AddPlayer extends JFrame {
                 Date birthdate = new Date();
                 int goalScorer;
                 int goalConceded;
-                if(playerName.getText().isBlank() || playerLastName.getText().isBlank() || (!forwardCheckBox.isSelected() && !midfenderCheckBox.isSelected() && !defenderCheckBox.isSelected() && !goalkeaperCheckBox.isSelected() ) || playerBirthDate_s.getText().isBlank() || footComboBox.getSelectedItem().equals('\0') ) {
+                if(playerName.getText().isBlank() || playerLastName.getText().isBlank() || (!forwardCheckBox.isSelected() && !midfielderCheckBox.isSelected() && !defenderCheckBox.isSelected() && !goalkeeperCheckBox.isSelected() ) || playerBirthDate_s.getText().isBlank() || footComboBox.getSelectedItem().equals('\0') ) {
                     JOptionPane.showMessageDialog(null, "Errore, tutti i campi sono obbligatori!", "Errore", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -143,7 +143,7 @@ public class AddPlayer extends JFrame {
                     foot = 'A';
                 String positions = "";
                 boolean first = true;
-                if(goalkeaperCheckBox.isSelected())
+                if(goalkeeperCheckBox.isSelected())
                 {
                     positions = "G";
                 }
@@ -153,7 +153,7 @@ public class AddPlayer extends JFrame {
                         first = false;
                         defenderCheckBox.setSelected(false);
                     }
-                    if (midfenderCheckBox.isSelected()) {
+                    if (midfielderCheckBox.isSelected()) {
                         if (first) {
                             positions = "M";
                             first = false;
@@ -178,18 +178,18 @@ public class AddPlayer extends JFrame {
     }
     private void verify_roles()
     {
-        if(defenderCheckBox.isSelected() || midfenderCheckBox.isSelected() || forwardCheckBox.isSelected())
+        if(defenderCheckBox.isSelected() || midfielderCheckBox.isSelected() || forwardCheckBox.isSelected())
         {
             goalConcededSpinner.setEnabled(false);
             goalConcededSpinner.setValue(0);
 
-            goalkeaperCheckBox.setEnabled(false);
-            goalkeaperCheckBox.setSelected(false);
+            goalkeeperCheckBox.setEnabled(false);
+            goalkeeperCheckBox.setSelected(false);
         }
         else
         {
             goalConcededSpinner.setEnabled(true);
-            goalkeaperCheckBox.setEnabled(true);
+            goalkeeperCheckBox.setEnabled(true);
         }
     }
 }
