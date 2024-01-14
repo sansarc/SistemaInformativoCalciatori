@@ -100,7 +100,7 @@ public class Query {
                     player.setGoals(rs.getInt(7));
                     player.setPosition(rs.getString(9));
                     player.setImage(rs.getBytes(10));
-                    if (player.getPosition().contains("Goalkeeper")) player.setGoalsConceded(rs.getInt(8));
+                    if (player.getPosition().contains("G")) player.setGoalsConceded(rs.getInt(8));
                     playerTransfer.setPlayer(player);
                 }
                 team = new Team();
@@ -201,14 +201,163 @@ public class Query {
         return usr;
     }
 
-    public Player InsertPlayer(Player playerRequest) {
+    public int InsertPlayer(Player playerRequest) {
         var resp = queryPlayers(playerRequest.getName(), playerRequest.getLastName(), '=', String.valueOf(playerRequest.getAge(false)), Arrays.stream(((playerRequest.getPosition()).split(","))).toList(), playerRequest.getFoot(), false, "", false);
         if (!resp.isEmpty()) {
             int scelta = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
-            if (scelta == JOptionPane.NO_OPTION)
-                return null;
+            if (scelta == JOptionPane.YES_OPTION)
+                return InsertPlayer_query(playerRequest);
         }
-        return null;
+        else {
+            return InsertPlayer_query(playerRequest);
+        }
+        return -1;
     }
 
+    private int InsertPlayer_query(Player playerRequest) {
+        int idPlayer = -1;
+        Connection connection = DBconnection.connect();
+        String query = "INSERT INTO PLAYER(player_name, lastname, birthdate, foot, goalsscored, goalconceded, positions) VALUES(?,?,?,?,?,?,?) RETURNING IDPLAYER";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, playerRequest.getName());
+            statement.setString(2, playerRequest.getLastName());
+            statement.setDate(3, (java.sql.Date) playerRequest.getBirthDate());
+            statement.setString(5, Character.toString(playerRequest.getFoot()));
+            statement.setInt(6, playerRequest.getGoals());
+            statement.setInt(7, playerRequest.getGoalsConceded());
+            statement.setString(8, playerRequest.getPosition());
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                idPlayer = rs.getInt(1);
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } finally {
+            DBconnection.disconnect(connection);
+            return idPlayer;
+        }
+    }
+    public List<String> SelectAllNationsForTeams() {
+        List<String> nations = new ArrayList<String>();
+        nations.add("");
+        Connection connection = DBconnection.connect();
+        String query = "SELECT DISTINCT NATION FROM TEAMS";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            var rs = statement.executeQuery();
+            while (rs.next()) {
+                nations.add(rs.getString(1));
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            DBconnection.disconnect(connection);
+            return nations;
+        }
+    }
+    public List<String> SelectLevelsFromNation(String nation) {
+        List<String> levels = new ArrayList<String>();
+        levels.add("");
+        Connection connection = DBconnection.connect();
+        String query = "SELECT DISTINCT LEVEL FROM TEAMS WHERE nation = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, nation);
+            var rs = statement.executeQuery();
+            while (rs.next()) {
+                levels.add(rs.getString(1));
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } finally {
+            DBconnection.disconnect(connection);
+            return levels;
+        }
+    }
+    public List<Team> TeamsFromNationAndLevel(String nation, int level) {
+        List<Team> teams = new ArrayList<Team>();
+        teams.add(new Team("", nation, level, -1));
+        Connection connection = DBconnection.connect();
+        String query = "SELECT TEAM_NAME, NATION, LEVEL, IDTEAM FROM TEAMS WHERE nation = ? and level = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, nation);
+            statement.setInt(2, level);
+            var rs = statement.executeQuery();
+            while (rs.next()) {
+                teams.add(new Team(rs.getString(1), rs.getString(2), rs.getInt(3), rs.getInt(4) ) );
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } finally {
+            DBconnection.disconnect(connection);
+            return teams;
+        }
+    }
+    public int insert_player_team(int idPlayer, int idTeam, java.util.Date startDate, java.util.Date endDate) {
+        int idPlayerRet = -1;
+        Connection connection = DBconnection.connect();
+        String query = "";
+        if(endDate != null) {
+            query = "INSERT INTO PLAYER_TEAM(idplayer,idteam,startdate,enddate) VALUES(?,?,?,?) RETURNING IDPLAYER";
+        }
+        else {
+            query = "INSERT INTO PLAYER_TEAM(idplayer,idteam,startdate) VALUES(?,?,?) RETURNING IDPLAYER";
+        }
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idPlayer);
+            statement.setInt(2, idTeam);
+            statement.setDate(3, new java.sql.Date(startDate.getTime()));
+            if(endDate != null) {
+                statement.setDate(4, new java.sql.Date(endDate.getTime()));
+            }
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                idPlayerRet = rs.getInt(1);
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return idPlayerRet;
+        }
+    }
+    public void select_player_career(int idPlayer) {
+        Connection connection = DBconnection.connect();
+        String query = "SELECT idteam,team_name,TO_CHAR(startdate, 'MM/DD/YYYY') AS startdate, TO_CHAR(enddate, 'MM/DD/YYYY') AS enddate FROM PLAYER_CARREER WHERE IDPlayer = ? ORDER BY STARTDATE DESC";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idPlayer);
+            ResultSet rs = statement.executeQuery();
+            ResultSetMetaData metaData = rs.getMetaData();
+
+            DefaultTableModel tableModel = new DefaultTableModel();
+            int cols = metaData.getColumnCount();
+            for (int i = 2; i <= cols; i++) {
+                String colName = metaData.getColumnName(i);
+                String tableColName = QueryTools.updateColumnName(colName);
+                tableModel.addColumn(tableColName);
+            }
+
+            String columnName;
+            while (rs.next()) {
+                Object[] rowData = new Object[cols];
+                for (int i = 2; i <= cols; i++) {
+                    columnName = metaData.getColumnName(i);
+                    if (i == 2) rowData[i - 2] = "<html><b>" + rs.getObject(columnName) + "</b></html>";
+                    else rowData[i - 2] = rs.getObject(columnName);
+                }
+                tableModel.addRow(rowData);
+            }
+            resultsTable.setModel(tableModel);
+
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            DBconnection.disconnect(connection);
+        }
+    }
 }

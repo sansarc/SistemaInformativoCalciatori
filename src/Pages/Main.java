@@ -49,14 +49,14 @@ public class Main extends JFrame {
     private Query query;
     List<Integer> ids;
 
-    public Main(char user_type, String username) {
+    public Main(String username) {
         setContentPane(panel);
         setTitle("Sistema Informativo Calciatori");
         setSize(1100, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
-        adminPanel.setVisible(user_type == 'A');
+        adminPanel.setVisible(Login.user_type == 'A');
         userGreetLabel.setText("<html> Hi, <b>" + username + "</b>! </html>");
         String[] footOpt = {"\0", "Left", "Right", "Ambidextrous"};
         for (String i : footOpt) footComboBox.addItem(i);

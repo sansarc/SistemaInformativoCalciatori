@@ -172,7 +172,19 @@ public class AddPlayer extends JFrame {
                 }
                 Player playerRequest = new Player(playerName.getText(), playerLastName.getText(), positions, birthdate, null, foot, goalScorer, goalConceded);
                 var query = new Query();
-                Player playerResponse = query.InsertPlayer(playerRequest);
+                int playerId = query.InsertPlayer(playerRequest);
+                if(playerId == -1) {
+                    JOptionPane.showMessageDialog(null, "Errore, non è stato possibile inserire il calciatore!", "Errore", JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Calciatore inserito con successo!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    Player player_i = new Player();
+                    player_i.setId(playerId);
+                    player_i.setName(playerName.getText());
+                    player_i.setLastName(playerLastName.getText());
+                    new Pages.AddOrModifyCarreer(player_i);
+                    dispose();
+                }
             }
         });
     }

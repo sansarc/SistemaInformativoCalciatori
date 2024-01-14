@@ -10,6 +10,7 @@ public class Player {
     private char foot;
     private int goals, goalsConceded;
     private byte[] image;
+    private int idPlayer;
 
     public Player(String _name, String _lastName, String _position, Date _dateOfBirth, Date _retirementDate, char _foot, int _goals, int _goalsConceded)
     {
@@ -21,6 +22,18 @@ public class Player {
         foot = _foot;
         goals = _goals;
         goalsConceded = _goalsConceded;
+    }
+    public Player(String _name, String _lastName, String _position, Date _dateOfBirth, Date _retirementDate, char _foot, int _goals, int _goalsConceded, int id)
+    {
+        name = _name;
+        lastName = _lastName;
+        position = _position;
+        birthDate = _dateOfBirth;
+        retirementDate = _retirementDate;
+        foot = _foot;
+        goals = _goals;
+        goalsConceded = _goalsConceded;
+        idPlayer = id;
     }
     public Player() {}
     public void setName(String s) {
@@ -55,6 +68,8 @@ public class Player {
     public int getGoals() {return goals;}
     public int getGoalsConceded() {return goalsConceded;}
     public byte[] getImage() {return Base64.getMimeDecoder().decode(image);}
+    public int getId() { return idPlayer; }
+    public void setId(int id) { idPlayer = id; }
     public int getAge(boolean from_db) {
         var actualDate = LocalDate.now();
         int birthMonth = 0;

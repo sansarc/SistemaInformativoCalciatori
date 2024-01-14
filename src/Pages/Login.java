@@ -19,6 +19,7 @@ public class Login extends JFrame {
     private JButton signupButton;
     private JButton loginButton;
     private Query query;
+    static char user_type;
 
     public Login() {
         setContentPane(panel);
@@ -34,18 +35,19 @@ public class Login extends JFrame {
                 String pwd = password.getText();
                 if (blankCredentials(u_name, pwd)) return;
                 query = new Query();
-                var user_type = query.Login(u_name, pwd);
-                if (user_type == '0')
+                var ut = query.Login(u_name, pwd);
+                if (ut == '0')
                 {
                     JOptionPane.showMessageDialog(null, "Internal Error!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                else if (user_type == '1')
+                else if (ut == '1')
                 {
                     JOptionPane.showMessageDialog(null, "Wrong Credentials!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else
                 {
-                    new Main(user_type, u_name);
+                    user_type = ut;
+                    new Main(u_name);
                     dispose();
                 }
             }

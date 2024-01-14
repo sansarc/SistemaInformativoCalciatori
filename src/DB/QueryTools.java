@@ -49,10 +49,13 @@ public class QueryTools {
 
     public static String updateColumnName(String columnName) {
         return switch (columnName) {
-            case "idcalciatore" -> "";
+            case "idplayer" -> "";
             case "player_name" -> "Name";
             case "lastname" -> "Last Name";
             case "team_name" -> "Team";
+            case "startdate" -> "Start Date";
+            case "enddate" -> "End Date";
+            case "idteam" -> "";
             default -> columnName;
         };
     }
