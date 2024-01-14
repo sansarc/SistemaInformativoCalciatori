@@ -217,7 +217,7 @@ public class Query {
     private int InsertPlayer_query(Player playerRequest) {
         int idPlayer = -1;
         Connection connection = DBconnection.connect();
-        String query = "INSERT INTO PLAYER(player_name, lastname, birthdate, foot, goalsscored, goalconceded, positions) VALUES(?,?,?,?,?,?,?) RETURNING IDPLAYER";
+        String query = "INSERT INTO PLAYERS(player_name, lastname, birthdate, foot, goalsscored, goalconceded, positions) VALUES(?,?,?,?,?,?,?) RETURNING IDPLAYER";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, playerRequest.getName());
             statement.setString(2, playerRequest.getLastName());
