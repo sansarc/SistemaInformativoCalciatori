@@ -2,8 +2,12 @@ package Pages;
 
 import Entity.*;
 import DB.Query;
+
+import javax.print.attribute.standard.PagesPerMinute;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -20,6 +24,7 @@ public class Profile extends JFrame {
     private JLabel goalsConcededLabel;
     private JLabel footLabel;
     private JLabel featureLabel;
+    private JButton showCarreerButton;
     private PlayerTransfer playerTransfer;
     private Player player;
     private PlayerFeature playerFeature;
@@ -34,12 +39,16 @@ public class Profile extends JFrame {
         imageLabel.setText("");
         playerNameLabel.setText("");
         Query query = new Query();
-        playerTransfer = query.queryPlayerProfile(id);
-        player = playerTransfer.getPlayer();
+        player = query.GetPlayerFromId(id);
         playerFeature = query.queryPlayerFeature(id);
 
         setTitle(player.getName() + " " + player.getLastName());
-        imageLabel.setIcon(new ImageIcon(player.getImage()));
+        try {
+            imageLabel.setIcon(new ImageIcon(player.getImage()));
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
         playerNameLabel.setText(playerNameLabel.getText() + " " + player.getName() + " " + player.getLastName());
         birthDateLabel.setText(birthDateLabel.getText() + " " + player.getBirthDate().toString().substring(5, 7) + "/" + player.getBirthDate().toString().substring(8, 10)  + "/" + player.getBirthDate().toString().substring(0, 4) + " (" + player.getAge(true) + ")");
         var positions = player.getPosition().split(",");
@@ -81,8 +90,13 @@ public class Profile extends JFrame {
                 showOptionsDialog(Profile.this, playerFeature.getFeatureList());
             }
         });
-
-        DefaultTableModel transferTableModel = new DefaultTableModel();
+        showCarreerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Pages.AddOrModifyCarreer(player);
+            }
+        });
+        /*DefaultTableModel transferTableModel = new DefaultTableModel();
         transferTableModel.addColumn("Date");
         transferTableModel.addColumn("Left");
         transferTableModel.addColumn("Joined");
@@ -102,7 +116,7 @@ public class Profile extends JFrame {
             transferTableModel.addRow(rowData);
         }
         transferTable.setModel(transferTableModel);
-        transferTable.setEnabled(false);
+        transferTable.setEnabled(false);*/
     }
 
     private static void showOptionsDialog(JFrame component, List<Feature> features) {

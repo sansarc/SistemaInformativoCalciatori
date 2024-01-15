@@ -35,7 +35,7 @@ public class AddOrModifyCarreer extends JFrame {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
-        setSize(850, 850);
+        setSize(850, 500);
         if(Login.user_type == 'A') {
             admin_panel.setVisible(true);
             setTitle("SIC - Edit Carreer of " + player.getName() + " " + player.getLastName());

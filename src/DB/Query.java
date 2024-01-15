@@ -22,7 +22,7 @@ public class Query {
     public Query(JTable resultsTable) {
         this.resultsTable = resultsTable;
     }
-
+    //Queries on Player
     public List<Integer> queryPlayers(String name, String lastname, char ageMath, String age, List<String> positions, char foot, boolean isRetired, String team, boolean isFromMain) {
         Connection connection = DBconnection.connect();
         String query = QueryTools.getQuery(name, lastname, ageMath, age, positions, foot, isRetired, team);
@@ -78,7 +78,6 @@ public class Query {
 
         return ids;
     }
-
     public PlayerTransfer queryPlayerProfile(int id) {
         Connection connection = DBconnection.connect();
         String query = "SELECT DISTINCT players.*, teams.team_name, Player_Team.StartDate, player_team.EndDate, STRING_AGG(DISTINCT features.feature_name, ', ') AS feature_list FROM players JOIN Player_Team ON players.idPlayer = Player_team.idPlayer JOIN teams ON player_team.idTeam = teams.idTeam JOIN player_feature ON players.idPlayer = player_feature.idPlayer JOIN features ON features.Feature_Name = player_feature.idFeature WHERE players.idPlayer = ? GROUP BY players.idPlayer, teams.team_name, player_team.StartDate, player_team.EndDate ORDER BY player_team.startdate;";
@@ -116,7 +115,80 @@ public class Query {
 
         return playerTransfer;
     }
+    public int InsertPlayer(Player playerRequest) {
+        var resp = queryPlayers(playerRequest.getName(), playerRequest.getLastName(), '=', String.valueOf(playerRequest.getAge(false)), Arrays.stream(((playerRequest.getPosition()).split(","))).toList(), playerRequest.getFoot(), false, "", false);
+        if (!resp.isEmpty()) {
+            int scelta = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
+            if (scelta == JOptionPane.YES_OPTION)
+                return InsertPlayer_query(playerRequest);
+        }
+        else {
+            return InsertPlayer_query(playerRequest);
+        }
+        return -1;
+    }
+    private int InsertPlayer_query(Player playerRequest) {
+        int idPlayer = -1;
+        Connection connection = DBconnection.connect();
+        String query = "INSERT INTO PLAYERS(player_name, lastname, birthdate, foot, goalsscored, goalconceded, positions) VALUES(?,?,?,?,?,?,?) RETURNING IDPLAYER";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, playerRequest.getName());
+            statement.setString(2, playerRequest.getLastName());
+            statement.setDate(3, new java.sql.Date(playerRequest.getBirthDate().getTime()));
+            statement.setString(4, Character.toString(playerRequest.getFoot()));
+            statement.setInt(5, playerRequest.getGoals());
+            statement.setInt(6, playerRequest.getGoalsConceded());
+            statement.setString(7, playerRequest.getPosition());
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                idPlayer = rs.getInt(1);
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return idPlayer;
+        }
+    }
+    public Player GetPlayerFromId(int id) {
+        Connection connection = DBconnection.connect();
+        String query = "SELECT * FROM PLAYERS WHERE IDPlayer = ?";
 
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id);
+            System.out.println(statement);
+            ResultSet rs = statement.executeQuery();
+            player = new Player();
+            playerTransfer = new PlayerTransfer();
+
+            while (rs.next()) {
+                if (player.getName() == null) {
+                    player.setId(rs.getInt(1));
+                    player.setName(rs.getString(2));
+                    player.setLastName(rs.getString(3));
+                    player.setBirthDate(rs.getDate(4));
+                    player.setFoot(rs.getString(5).charAt(0));
+                    player.setRetirementDate(rs.getDate(6));
+                    player.setGoals(rs.getInt(7));
+                    player.setPosition(rs.getString(9));
+                    player.setImage(rs.getBytes(10));
+                    if (player.getPosition().contains("G")) player.setGoalsConceded(rs.getInt(8));
+                    playerTransfer.setPlayer(player);
+                }
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            DBconnection.disconnect(connection);
+            return player;
+        }
+    }
     public PlayerFeature queryPlayerFeature(int id) {
         Connection connection = DBconnection.connect();
         String query = "SELECT feature_name, description, Type_feature  FROM features JOIN player_feature ON features.feature_name = player_feature.idFeature JOIN players ON players.idPlayer = player_feature.idPlayer WHERE players.idPlayer = ?;";
@@ -143,7 +215,7 @@ public class Query {
 
         return playerFeature;
     }
-
+    //Query on User
     public char Login(String username, String password) {
         User usr = SelectUser(username, password);
         if (usr == null)
@@ -151,7 +223,6 @@ public class Query {
         else
             return usr.getType();
     }
-
     public boolean CreateUser(String username, String password) {
         var respSelect = this.SelectUser(username, "");
         if (respSelect != null) {
@@ -173,7 +244,6 @@ public class Query {
         }
         return ret;
     }
-
     private User SelectUser(String username, String password) {
         User usr = null;
         Connection connection = DBconnection.connect();
@@ -200,43 +270,7 @@ public class Query {
         }
         return usr;
     }
-
-    public int InsertPlayer(Player playerRequest) {
-        var resp = queryPlayers(playerRequest.getName(), playerRequest.getLastName(), '=', String.valueOf(playerRequest.getAge(false)), Arrays.stream(((playerRequest.getPosition()).split(","))).toList(), playerRequest.getFoot(), false, "", false);
-        if (!resp.isEmpty()) {
-            int scelta = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
-            if (scelta == JOptionPane.YES_OPTION)
-                return InsertPlayer_query(playerRequest);
-        }
-        else {
-            return InsertPlayer_query(playerRequest);
-        }
-        return -1;
-    }
-
-    private int InsertPlayer_query(Player playerRequest) {
-        int idPlayer = -1;
-        Connection connection = DBconnection.connect();
-        String query = "INSERT INTO PLAYERS(player_name, lastname, birthdate, foot, goalsscored, goalconceded, positions) VALUES(?,?,?,?,?,?,?) RETURNING IDPLAYER";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, playerRequest.getName());
-            statement.setString(2, playerRequest.getLastName());
-            statement.setDate(3, (java.sql.Date) playerRequest.getBirthDate());
-            statement.setString(5, Character.toString(playerRequest.getFoot()));
-            statement.setInt(6, playerRequest.getGoals());
-            statement.setInt(7, playerRequest.getGoalsConceded());
-            statement.setString(8, playerRequest.getPosition());
-            var rs = statement.executeQuery();
-            if (rs.next()) {
-                idPlayer = rs.getInt(1);
-            }
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } finally {
-            DBconnection.disconnect(connection);
-            return idPlayer;
-        }
-    }
+    //Queries on Team
     public List<String> SelectAllNationsForTeams() {
         List<String> nations = new ArrayList<String>();
         nations.add("");
@@ -358,6 +392,60 @@ public class Query {
             ex.printStackTrace();
         } finally {
             DBconnection.disconnect(connection);
+        }
+    }
+    public int insert_team(Team teamRequest) {
+        var resp = SearchTeam(teamRequest);
+        if (resp != -1) {
+            int scelta = JOptionPane.showConfirmDialog(null, "Esiste già una squadra chiamata " + teamRequest.getName() + " nella nazione indicata!", "Calciatore già presente", JOptionPane.ERROR_MESSAGE);
+        }
+        else {
+            return InsertTeam_query(teamRequest);
+        }
+        return -1;
+    }
+    private int SearchTeam(Team teamRequest) {
+        int idTeam = -1;
+        Connection connection = DBconnection.connect();
+        String query = "SELECT idTeam FROM TEAMS WHERE team_name = ? and nation= ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, teamRequest.getName());
+            statement.setString(2, teamRequest.getNationality());
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                idTeam = rs.getInt(1);
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return idTeam;
+        }
+    }
+    private int InsertTeam_query(Team teamRequest) {
+        int idTeam = -1;
+        Connection connection = DBconnection.connect();
+        String query = "INSERT INTO TEAMS(team_name, nation, level) VALUES(?,?,?) RETURNING IDTEAM";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, teamRequest.getName());
+            statement.setString(2, teamRequest.getNationality());
+            statement.setInt(3, teamRequest.getCategory());
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                idTeam = rs.getInt(1);
+                int scelta = JOptionPane.showConfirmDialog(null, "Team inserito con successo!", "OK", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return idTeam;
         }
     }
 }
