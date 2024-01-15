@@ -3,9 +3,7 @@ package Pages;
 import Entity.*;
 import DB.Query;
 
-import javax.print.attribute.standard.PagesPerMinute;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -19,14 +17,15 @@ public class Profile extends JFrame {
     private JLabel birthDateLabel;
     private JLabel positionLabel;
     private JLabel goalsLabel;
-    private JScrollPane tableScrollPane;
-    private JTable transferTable;
     private JLabel goalsConcededLabel;
     private JLabel footLabel;
     private JLabel featureLabel;
     private JButton showCarreerButton;
+    private JButton editPlayerButton;
+    private JButton deleteButton;
+    private JPanel adminPanel;
     private PlayerTransfer playerTransfer;
-    private Player player;
+    private Player_Profile player;
     private PlayerFeature playerFeature;
 
     public Profile(int id) {
@@ -39,9 +38,9 @@ public class Profile extends JFrame {
         imageLabel.setText("");
         playerNameLabel.setText("");
         Query query = new Query();
-        player = query.GetPlayerFromId(id);
-        playerFeature = query.queryPlayerFeature(id);
-
+        player = query.GetPlayerProfileFromId(id);
+        playerFeature = query.queryPlayerFeature(id, (Player) player);
+        adminPanel.setVisible(Login.user_type == 'A');
         setTitle(player.getName() + " " + player.getLastName());
         try {
             imageLabel.setIcon(new ImageIcon(player.getImage()));
@@ -71,28 +70,56 @@ public class Profile extends JFrame {
             }
         }
         goalsLabel.setText(goalsLabel.getText() + " " + player.getGoals());
-        if (player.getPosition().contains("Goalkeeper")) {
+        if (player.getPosition().contains("G")) {
             goalsConcededLabel.setText(goalsConcededLabel.getText() + " " + player.getGoalsConceded());
             goalsConcededLabel.setVisible(true);
         }
         footLabel.setText(footLabel.getText() + " " + player.getFootString());
-        featureLabel.setText("<html><u>" + featureLabel.getText() + "</u>" + ": " + playerFeature.getFeature(0).getName());
-        if (playerFeature.getFeatureList().size() > 1) {
-            for (int i = 1; i < playerFeature.getFeatureList().size(); i++) {
-                featureLabel.setText(featureLabel.getText() + ", " + playerFeature.getFeature(i).getName());
+        if(!playerFeature.getFeatureList().isEmpty()) {
+            featureLabel.setText("<html><u>" + featureLabel.getText() + "</u>" + ": " + playerFeature.getFeature(0).getName());
+            if (playerFeature.getFeatureList().size() > 1) {
+                for (int i = 1; i < playerFeature.getFeatureList().size(); i++) {
+                    featureLabel.setText(featureLabel.getText() + ", " + playerFeature.getFeature(i).getName());
+                }
             }
-        }
-        featureLabel.setText(featureLabel.getText() + "</html>");
+            featureLabel.setText(featureLabel.getText() + "</html>");
 
-        featureLabel.addMouseListener(new MouseAdapter() {
+            featureLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    showOptionsDialog(Profile.this, playerFeature.getFeatureList());
+                }
+            });
+        }
+        deleteButton.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                showOptionsDialog(Profile.this, playerFeature.getFeatureList());
+            public void actionPerformed(ActionEvent e) {
+                int choice = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
+                if (choice == JOptionPane.YES_OPTION) {
+                    boolean r = query.DeletePlayer(player.getId());
+                    if(r) {
+                        JOptionPane.showMessageDialog(null, "Calciatore eliminato", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+                        dispose();
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "Calciatore non eliminato", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+                        dispose();
+                    }
+                }
+
+            }
+        });
+
+        editPlayerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Pages.AddOrEditPlayer(player);
             }
         });
         showCarreerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 new Pages.AddOrModifyCarreer(player);
             }
         });

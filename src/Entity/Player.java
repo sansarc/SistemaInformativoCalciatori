@@ -5,12 +5,11 @@ import java.util.Base64;
 import java.util.Date;
 
 public class Player {
-    private String name, lastName, position;
-    private Date birthDate, retirementDate;
-    private char foot;
-    private int goals, goalsConceded;
-    private byte[] image;
-    private int idPlayer;
+    protected String name, lastName, position;
+    protected Date birthDate, retirementDate;
+    protected char foot;
+    protected byte[] image;
+    protected int idPlayer;
 
     public Player(String _name, String _lastName, String _position, Date _dateOfBirth, Date _retirementDate, char _foot, int _goals, int _goalsConceded)
     {
@@ -20,10 +19,8 @@ public class Player {
         birthDate = _dateOfBirth;
         retirementDate = _retirementDate;
         foot = _foot;
-        goals = _goals;
-        goalsConceded = _goalsConceded;
     }
-    public Player(String _name, String _lastName, String _position, Date _dateOfBirth, Date _retirementDate, char _foot, int _goals, int _goalsConceded, int id)
+    public Player(String _name, String _lastName, String _position, Date _dateOfBirth, Date _retirementDate, char _foot, int id)
     {
         name = _name;
         lastName = _lastName;
@@ -31,8 +28,6 @@ public class Player {
         birthDate = _dateOfBirth;
         retirementDate = _retirementDate;
         foot = _foot;
-        goals = _goals;
-        goalsConceded = _goalsConceded;
         idPlayer = id;
     }
     public Player() {}
@@ -46,10 +41,6 @@ public class Player {
         retirementDate = s;}
     public void setFoot(char c) {
         foot = c;}
-    public void setGoals(int n) {
-        goals = n;}
-    public void setGoalsConceded(int n) {
-        goalsConceded = n;}
     public void setPosition(String s) {
         position = s;}
     public void setImage (byte[] b) {image = b;}
@@ -65,8 +56,6 @@ public class Player {
         else if (foot == 'R') return "right";
         return "ambidextrous";
     }
-    public int getGoals() {return goals;}
-    public int getGoalsConceded() {return goalsConceded;}
     public byte[] getImage() {return Base64.getMimeDecoder().decode(image);}
     public int getId() { return idPlayer; }
     public void setId(int id) { idPlayer = id; }

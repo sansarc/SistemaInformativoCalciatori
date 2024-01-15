@@ -2,6 +2,7 @@ package Pages;
 
 import DB.Query;
 import Entity.Player;
+import Entity.Player_Profile;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -9,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class AddPlayer extends JFrame {
+public class AddOrEditPlayer extends JFrame {
     private JTextField playerName;
     private JComboBox footComboBox;
     private JCheckBox midfielderCheckBox;
@@ -20,26 +21,68 @@ public class AddPlayer extends JFrame {
     private JTextField playerBirthDate_s;
     private JPanel panel;
     private JButton insertButton;
-    private JSpinner goalScoredSpinner;
-    private JSpinner goalConcededSpinner;
 
-    public AddPlayer() {
+    public AddOrEditPlayer(Player player) {
         setContentPane(panel);
         setSize(500, 400);
-        setTitle("SIC - Add New Player");
+        boolean isEdit = player != null;
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
-        goalConcededSpinner.setEnabled(false);
         String[] footOpt = {"\0", "Left", "Right", "Ambidextrous"};
         for (String i : footOpt) footComboBox.addItem(i);
+        if(!isEdit) {
+            setTitle("SIC - Add New Player");
+        }
+        else  {
+            setTitle("SIC - Edit " + player.getName() + player.getLastName());
+            insertButton.setText("Edit");
+            playerName.setText(player.getName());
+            playerLastName.setText(player.getLastName());
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+            playerBirthDate_s.setText(sdf.format(player.getBirthDate()));
+            var list_positions = player.getPosition().split(",");
+            for(var pos : list_positions) {
+                switch(pos) {
+                    case "G":
+                        goalkeeperCheckBox.setSelected(true);
+                        break;
+                    case "D":
+                        defenderCheckBox.setSelected(true);
+                        break;
+                    case "M":
+                        midfielderCheckBox.setSelected(true);
+                        break;
+                    case "F":
+                        forwardCheckBox.setSelected(true);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            String f = "";
+            switch(player.getFoot()) {
+                case 'R':
+                    f = "Right";
+                    break;
+                case 'L':
+                    f = "Left";
+                    break;
+                case 'A':
+                    f = "Ambidextrous";
+                    break;
+                default:
+                    f = "\0";
+                    break;
+            }
+            footComboBox.setSelectedItem(f);
+        }
         goalkeeperCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e)
             {
                 if(goalkeeperCheckBox.isSelected())
                 {
-                    goalConcededSpinner.setEnabled(true);
 
                     forwardCheckBox.setEnabled(false);
                     forwardCheckBox.setSelected(false);
@@ -52,9 +95,6 @@ public class AddPlayer extends JFrame {
                 }
                 else
                 {
-                    goalConcededSpinner.setEnabled(false);
-                    goalConcededSpinner.setValue(0);
-
                     forwardCheckBox.setEnabled(true);
                     midfielderCheckBox.setEnabled(true);
                     defenderCheckBox.setEnabled(true);
@@ -88,8 +128,6 @@ public class AddPlayer extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 char foot = '\0';
                 Date birthdate = new Date();
-                int goalScorer;
-                int goalConceded;
                 if(playerName.getText().isBlank() || playerLastName.getText().isBlank() || (!forwardCheckBox.isSelected() && !midfielderCheckBox.isSelected() && !defenderCheckBox.isSelected() && !goalkeeperCheckBox.isSelected() ) || playerBirthDate_s.getText().isBlank() || footComboBox.getSelectedItem().equals('\0') ) {
                     JOptionPane.showMessageDialog(null, "Errore, tutti i campi sono obbligatori!", "Errore", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -104,34 +142,6 @@ public class AddPlayer extends JFrame {
                     catch (Exception exception)
                     {
                         JOptionPane.showMessageDialog(null, "Errore, la data non è espressa in un formato corretto!", "Errore", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    try
-                    {
-                        goalScorer = Integer.parseInt(goalScoredSpinner.getValue().toString());
-                        if(goalScorer < 0)
-                        {
-                            JOptionPane.showMessageDialog(null, "Errore, il valore inserito per goal scorer non è valido!", "Errore", JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-                    }
-                    catch(Exception exception)
-                    {
-                        JOptionPane.showMessageDialog(null, "Errore, il valore inserito per goal scorer non è valido!", "Errore", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    try
-                    {
-                        goalConceded = Integer.parseInt(goalConcededSpinner.getValue().toString());
-                        if(goalConceded < 0)
-                        {
-                            JOptionPane.showMessageDialog(null, "Errore, il valore inserito per goal conceded non è valido!", "Errore", JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-                    }
-                    catch(Exception exception)
-                    {
-                        JOptionPane.showMessageDialog(null, "Errore, il valore inserito per goal conceded non è valido!", "Errore", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
@@ -170,9 +180,16 @@ public class AddPlayer extends JFrame {
                         }
                     }
                 }
-                Player playerRequest = new Player(playerName.getText(), playerLastName.getText(), positions, birthdate, null, foot, goalScorer, goalConceded);
+                Player playerRequest = new Player(playerName.getText(), playerLastName.getText(), positions, birthdate, null, foot, -1);
                 var query = new Query();
-                int playerId = query.InsertPlayer(playerRequest);
+                int playerId = -1;
+                if(!isEdit) {
+                    playerId = query.InsertPlayer(playerRequest);
+                }
+                else {
+                    playerRequest.setId(player.getId());
+                    playerId = query.UpldatePlayer(playerRequest);
+                }
                 if(playerId == -1) {
                     JOptionPane.showMessageDialog(null, "Errore, non è stato possibile inserire il calciatore!", "Errore", JOptionPane.ERROR_MESSAGE);
                 }
@@ -182,25 +199,21 @@ public class AddPlayer extends JFrame {
                     player_i.setId(playerId);
                     player_i.setName(playerName.getText());
                     player_i.setLastName(playerLastName.getText());
+                    player_i.setPosition(positions);
                     new Pages.AddOrModifyCarreer(player_i);
                     dispose();
                 }
             }
         });
     }
-    private void verify_roles()
-    {
+    private void verify_roles() {
         if(defenderCheckBox.isSelected() || midfielderCheckBox.isSelected() || forwardCheckBox.isSelected())
         {
-            goalConcededSpinner.setEnabled(false);
-            goalConcededSpinner.setValue(0);
-
             goalkeeperCheckBox.setEnabled(false);
             goalkeeperCheckBox.setSelected(false);
         }
         else
         {
-            goalConcededSpinner.setEnabled(true);
             goalkeeperCheckBox.setEnabled(true);
         }
     }

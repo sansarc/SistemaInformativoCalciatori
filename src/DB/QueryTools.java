@@ -56,6 +56,8 @@ public class QueryTools {
             case "startdate" -> "Start Date";
             case "enddate" -> "End Date";
             case "idteam" -> "";
+            case "goalsscored" -> "Goals Scored";
+            case "goalsconceded" -> "Goals Conceded";
             default -> columnName;
         };
     }

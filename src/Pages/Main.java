@@ -62,7 +62,12 @@ public class Main extends JFrame {
         for (String i : footOpt) footComboBox.addItem(i);
         char[] ageOpt = {'=', '>', '<'};
         for (char i : ageOpt) ageComboBox.addItem(i);
-
+        addTeamButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AddTeam();
+            }
+        });
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -113,7 +118,7 @@ public class Main extends JFrame {
         addPlayerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new AddPlayer();
+                new AddOrEditPlayer(null);
             }
         });
         logoutButton.addActionListener(new ActionListener() {

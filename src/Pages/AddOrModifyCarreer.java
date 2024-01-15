@@ -19,6 +19,10 @@ public class AddOrModifyCarreer extends JFrame {
     private JComboBox selectNationBox;
     private JTable carreerTable;
     private JPanel admin_panel;
+    private JSpinner scorespinner;
+    private JPanel goalkeeperPanel;
+    private JSpinner concededspinner;
+    private JSpinner apparencesSpinner;
 
     /*public static void main(String[] args)
     {
@@ -55,8 +59,8 @@ public class AddOrModifyCarreer extends JFrame {
         selectLevelBox.setEnabled(false);
         selectTeamBox.setEnabled(false);
         insertButton.setEnabled(false);
-
-        query.select_player_career(player.getId());
+        goalkeeperPanel.setVisible(player.getPosition().contains("G"));
+        query.select_player_carreer(player.getId(), goalkeeperPanel.isVisible());
         selectNationBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -123,8 +127,16 @@ public class AddOrModifyCarreer extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(     selectTeamBox.getSelectedIndex() != 0
-                        && ! fromDate.getText().isBlank() )
+                        && ! fromDate.getText().isBlank())
                 {
+                    if(Integer.parseInt(scorespinner.getValue().toString()) < 0 || Integer.parseInt(concededspinner.getValue().toString()) < 0 || Integer.parseInt(apparencesSpinner.getValue().toString()) < 0 ) {
+                        JOptionPane.showMessageDialog(null, "Errore, i goal e le presenze non possono essere negativi!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+                    else if( (Integer.parseInt(scorespinner.getValue().toString()) > 0 || Integer.parseInt(concededspinner.getValue().toString()) > 0) && Integer.parseInt(apparencesSpinner.getValue().toString()) == 0 ) {
+                        JOptionPane.showMessageDialog(null, "Errore, se le presenze sono 0 non possono esserci goal subiti o segnati!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
                     Date from_date = new Date();
                     Date to_date = null;
                     SimpleDateFormat varDate = new SimpleDateFormat("MM/dd/yyyy");
@@ -152,13 +164,14 @@ public class AddOrModifyCarreer extends JFrame {
                             break;
                         }
                     }
-                    var idPlayerRet = query.insert_player_team(player.getId(), idTeam, from_date, to_date);
-                    if(idPlayerRet == -1) {
+                    int transferId = -1;
+                    transferId = query.insert_player_team(player.getId(), idTeam, from_date, to_date, Integer.parseInt(scorespinner.getValue().toString()), Integer.parseInt(concededspinner.getValue().toString()), goalkeeperPanel.isVisible(), Integer.parseInt(apparencesSpinner.getValue().toString()));
+                    if(transferId == -1) {
                         JOptionPane.showMessageDialog(null, "Errore, non è stato possibile inserire il record!", "Errore", JOptionPane.ERROR_MESSAGE);
                     }
                     else {
                         JOptionPane.showMessageDialog(null, "Record inserito con successo!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        query.select_player_career(player.getId());
+                        query.select_player_carreer(player.getId(), goalkeeperPanel.isVisible());
                     }
                 }
                 else {
