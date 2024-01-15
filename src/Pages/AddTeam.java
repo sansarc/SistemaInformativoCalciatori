@@ -7,9 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class AddTeam extends JFrame {
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         new AddTeam();
-    }
+    }*/
     private JPanel panel;
     private JTextField nationField;
     private JSpinner levelSpinner;

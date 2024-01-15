@@ -41,7 +41,7 @@ public class Main extends JFrame {
     private JPanel adminPanel;
     private JButton addPlayerButton;
     private JButton button2;
-    private JButton editUsersButton;
+    private JButton editTeamButton;
     private JButton addTeamButton;
     private JButton button5;
     private JLabel userGreetLabel;
@@ -68,6 +68,13 @@ public class Main extends JFrame {
                 new AddTeam();
             }
         });
+        editTeamButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new EditTeam();
+            }
+        });
+
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,6 +128,13 @@ public class Main extends JFrame {
                 new AddOrEditPlayer(null);
             }
         });
+        addPlayerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AddOrEditPlayer(null);
+            }
+        });
+
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

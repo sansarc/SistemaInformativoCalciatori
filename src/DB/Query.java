@@ -329,6 +329,46 @@ public class Query {
             return teams;
         }
     }
+    public boolean DeleteTeam(int idTeam) {
+        Connection connection = DBconnection.connect();
+        String query = "DELETE FROM TEAMS WHERE idTeam = ?";
+        boolean r = false;
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idTeam);
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            r = true;
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return r;
+        }
+    }
+
+    public int update_team(Team team) {
+        int idTeam = -1;
+        Connection connection = DBconnection.connect();
+        String query = "UPDATE TEAMS SET Level = ? WHERE IDTEAM = ? RETURNING IDTEAM";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, team.getCategory());
+            statement.setInt(2, team.getId());
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                idTeam = rs.getInt(1);
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return idTeam;
+        }
+    }
     public int insert_player_team(int idPlayer, int idTeam, java.util.Date startDate, java.util.Date endDate, int goalsscored, int goalsconceded, boolean isGoalkeeper, int apparences) {
         int transferId = -1;
         Connection connection = DBconnection.connect();

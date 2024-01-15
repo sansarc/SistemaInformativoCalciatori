@@ -1,4 +1,5 @@
 package DB;
+import javax.swing.*;
 import java.util.List;
 
 public class QueryTools {
@@ -60,5 +61,60 @@ public class QueryTools {
             case "goalsconceded" -> "Goals Conceded";
             default -> columnName;
         };
+    }
+    public static void selectNationTool(JComboBox selectNationBox, JComboBox selectLevelBox, List<String> levels) {
+        Query query = new Query();
+        try {
+            if(selectNationBox.getSelectedIndex() != 0) {
+                if(selectLevelBox.getItemCount() > 0)
+                    selectLevelBox.removeAllItems();
+                levels.clear();
+                levels.addAll(query.SelectLevelsFromNation(selectNationBox.getSelectedItem().toString()));
+                for (var l : levels) {
+                    selectLevelBox.addItem(l);
+                    selectLevelBox.setSelectedIndex(0);
+                    selectLevelBox.setEnabled(true);
+                }
+            }
+            else {
+                selectLevelBox.setEnabled(false);
+                selectLevelBox.setSelectedIndex(0);
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    public static void selectLevelTool(JComboBox selectNationBox, JComboBox selectLevelBox, JComboBox selectTeamBox, List<Entity.Team> teams) {
+        Query query = new Query();
+        try {
+            if (selectLevelBox.getSelectedIndex() != 0) {
+                if (selectTeamBox.getItemCount() > 0)
+                    selectTeamBox.removeAllItems();
+                teams.clear();
+                teams.addAll(query.TeamsFromNationAndLevel(selectNationBox.getSelectedItem().toString(), Integer.parseInt(selectLevelBox.getSelectedItem().toString())));
+                for (var t : teams) {
+                    selectTeamBox.addItem(t.getName());
+                    selectTeamBox.setEnabled(true);
+                }
+            } else {
+                selectTeamBox.setEnabled(false);
+                selectTeamBox.setSelectedIndex(0);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    public static boolean selectTeamTool(JComboBox selectTeamBox) {
+        try {
+            if(selectTeamBox.getSelectedIndex() != 0) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 }
