@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 
-public class AddOrModifyCarreer extends JFrame {
+public class AddOrEditCarreer extends JFrame {
     private JPanel panel;
     private JTextField fromDate;
     private JTextField toDate;
@@ -24,17 +24,7 @@ public class AddOrModifyCarreer extends JFrame {
     private JSpinner concededspinner;
     private JSpinner apparencesSpinner;
 
-    /*public static void main(String[] args)
-    {
-        boolean internal_action = false;
-        Player test = new Player();
-        test.setName("Victor");
-        test.setLastName("Osimhen");
-        test.setId(1);
-        new AddOrModifyCarreer(test, 'A');
-    }*/
-
-    public AddOrModifyCarreer(Player player) {
+    public AddOrEditCarreer(Player player) {
         setContentPane(panel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -64,63 +54,19 @@ public class AddOrModifyCarreer extends JFrame {
         selectNationBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    if(selectNationBox.getSelectedIndex() != 0) {
-                        if(selectLevelBox.getItemCount() > 0)
-                            selectLevelBox.removeAllItems();
-                        levels.clear();
-                        levels.addAll(query.SelectLevelsFromNation(selectNationBox.getSelectedItem().toString()));
-                        for (var l : levels) {
-                            selectLevelBox.addItem(l);
-                            selectLevelBox.setSelectedIndex(0);
-                            selectLevelBox.setEnabled(true);
-                        }
-                    }
-                    else {
-                        selectLevelBox.setEnabled(false);
-                        selectLevelBox.setSelectedIndex(0);
-                    }
-                } catch(Exception ex) {
-                    ex.printStackTrace();
-                }
+                QueryTools.selectNationTool(selectNationBox, selectLevelBox, levels);
             }
         });
         selectLevelBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    if(selectLevelBox.getSelectedIndex() != 0) {
-                        if (selectTeamBox.getItemCount() > 0)
-                            selectTeamBox.removeAllItems();
-                        teams.clear();
-                        teams.addAll(query.TeamsFromNationAndLevel(selectNationBox.getSelectedItem().toString(), Integer.parseInt(selectLevelBox.getSelectedItem().toString())));
-                        for (var t : teams) {
-                            selectTeamBox.addItem(t.getName());
-                            selectTeamBox.setEnabled(true);
-                        }
-                    }
-                    else {
-                        selectTeamBox.setEnabled(false);
-                        selectTeamBox.setSelectedIndex(0);
-                    }
-                } catch(Exception ex) {
-                    ex.printStackTrace();
-                }
+                QueryTools.selectLevelTool(selectNationBox, selectLevelBox, selectTeamBox, teams);
             }
         });
         selectTeamBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    if(selectTeamBox.getSelectedIndex() != 0) {
-                        insertButton.setEnabled(true);
-                    }
-                    else {
-                        insertButton.setEnabled(false);
-                    }
-                } catch(Exception ex) {
-                    ex.printStackTrace();
-                }
+                insertButton.setEnabled(QueryTools.selectTeamTool(selectTeamBox));
             }
         });
         insertButton.addActionListener(new ActionListener() {

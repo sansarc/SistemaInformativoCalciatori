@@ -40,7 +40,7 @@ public class Main extends JFrame {
     private JButton clearButton;
     private JPanel adminPanel;
     private JButton addPlayerButton;
-    private JButton button2;
+    private JButton addAwardsButton;
     private JButton editTeamButton;
     private JButton addTeamButton;
     private JButton button5;
@@ -66,6 +66,12 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new AddTeam();
+            }
+        });
+        addAwardsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AddAwards();
             }
         });
         editTeamButton.addActionListener(new ActionListener() {

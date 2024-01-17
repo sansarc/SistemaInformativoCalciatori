@@ -24,6 +24,7 @@ public class Profile extends JFrame {
     private JButton editPlayerButton;
     private JButton deleteButton;
     private JPanel adminPanel;
+    private JButton showPalmaresButton;
     private PlayerTransfer playerTransfer;
     private Player_Profile player;
     private PlayerFeature playerFeature;
@@ -119,31 +120,15 @@ public class Profile extends JFrame {
         showCarreerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                new Pages.AddOrModifyCarreer(player);
+                new Pages.AddOrEditCarreer(player);
             }
         });
-        /*DefaultTableModel transferTableModel = new DefaultTableModel();
-        transferTableModel.addColumn("Date");
-        transferTableModel.addColumn("Left");
-        transferTableModel.addColumn("Joined");
-
-        for (int i = 0; i < playerTransfer.getStartList().size(); i++) {
-            String left = "";
-            if (i > 0) {
-                left = playerTransfer.getTeam(i - 1).getName();
-                if(!left.isBlank())
-                    left = left.substring(5, 7) + "/" + left.substring(8, 10) + "/" + left.substring(0, 4);
+        showPalmaresButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Pages.ViewOrDeleteAwardFromPlayer(player);
             }
-            Object[] rowData = {
-                    playerTransfer.getStart(i).toString().substring(5, 7) + "/" + playerTransfer.getStart(i).toString().substring(8, 10) + "/" + playerTransfer.getStart(i).toString().substring(0, 4),
-                    left,
-                    playerTransfer.getTeam(i).getName()
-            };
-            transferTableModel.addRow(rowData);
-        }
-        transferTable.setModel(transferTableModel);
-        transferTable.setEnabled(false);*/
+        });
     }
 
     private static void showOptionsDialog(JFrame component, List<Feature> features) {

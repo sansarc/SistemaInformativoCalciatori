@@ -1,6 +1,7 @@
 package DB;
 import javax.swing.*;
 import java.util.List;
+import java.util.Date;
 
 public class QueryTools {
     public static String getQuery(String name, String lastname, char ageMath, String age, List<String> positions, char foot, boolean isRetired, String team) {
@@ -59,6 +60,9 @@ public class QueryTools {
             case "idteam" -> "";
             case "goalsscored" -> "Goals Scored";
             case "goalsconceded" -> "Goals Conceded";
+            case "apparences" -> "Apparences";
+            case "name" -> "Name";
+            case "windate" -> "Date";
             default -> columnName;
         };
     }
@@ -72,9 +76,9 @@ public class QueryTools {
                 levels.addAll(query.SelectLevelsFromNation(selectNationBox.getSelectedItem().toString()));
                 for (var l : levels) {
                     selectLevelBox.addItem(l);
-                    selectLevelBox.setSelectedIndex(0);
-                    selectLevelBox.setEnabled(true);
                 }
+                selectLevelBox.setSelectedIndex(0);
+                selectLevelBox.setEnabled(true);
             }
             else {
                 selectLevelBox.setEnabled(false);
@@ -94,8 +98,8 @@ public class QueryTools {
                 teams.addAll(query.TeamsFromNationAndLevel(selectNationBox.getSelectedItem().toString(), Integer.parseInt(selectLevelBox.getSelectedItem().toString())));
                 for (var t : teams) {
                     selectTeamBox.addItem(t.getName());
-                    selectTeamBox.setEnabled(true);
                 }
+                selectTeamBox.setEnabled(true);
             } else {
                 selectTeamBox.setEnabled(false);
                 selectTeamBox.setSelectedIndex(0);
@@ -113,6 +117,33 @@ public class QueryTools {
                 return false;
             }
         } catch(Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+    public static boolean selectTeamTool(JComboBox selectTeamBox, JComboBox selectPlayerBox, List<Entity.Player> players, int idTeam, Date dt) {
+        Query query = new Query();
+        try {
+            if (selectTeamBox.getSelectedIndex() != 0) {
+                if (selectPlayerBox.getItemCount() > 0)
+                    selectPlayerBox.removeAllItems();
+                players.clear();
+                players.addAll(query.player_from_team(idTeam, dt));
+                boolean first = true;
+                for (var p : players) {
+                    if(first) {
+                        selectPlayerBox.addItem("");
+                        first = false;
+                    }
+                    else
+                        selectPlayerBox.addItem(p.getName() + " " + p.getLastName() + " $" + p.getId());
+                }
+                return true;
+            } else {
+                selectPlayerBox.setSelectedIndex(0);
+                return false;
+            }
+        } catch (Exception ex) {
             ex.printStackTrace();
             return false;
         }

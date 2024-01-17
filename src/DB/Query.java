@@ -5,6 +5,7 @@ import Entity.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -416,9 +417,33 @@ public class Query {
             return transferId;
         }
     }
+    public List<Player> player_from_team(int idTeam, java.util.Date dt) {
+        List<Player> players = new ArrayList<Player>();
+        players.add(new Player());
+        Connection connection = DBconnection.connect();
+        String query = "SELECT idPlayer, player_name, lastname FROM PLAYER_CARREER WHERE idTeam = ? AND ? BETWEEN startdate AND enddate";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idTeam);
+            statement.setDate(2, new java.sql.Date(dt.getTime()));
+            var rs = statement.executeQuery();
+            while (rs.next()) {
+                Player p = new Player();
+                p.setId(rs.getInt(1));
+                p.setName(rs.getString(2));
+                p.setLastName(rs.getString(3));
+                players.add(p);
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } finally {
+            DBconnection.disconnect(connection);
+            return players;
+        }
+
+    }
     public void select_player_carreer(int idPlayer, boolean isGoalkeeper) {
         Connection connection = DBconnection.connect();
-        String query = "SELECT idteam,team_name,TO_CHAR(startdate, 'MM/DD/YYYY') AS startdate, TO_CHAR(enddate, 'MM/DD/YYYY') AS enddate, goalsscored, goalsconceded AS enddate FROM PLAYER_CARREER WHERE IDPlayer = ? ORDER BY STARTDATE DESC";
+        String query = "SELECT idteam,team_name,TO_CHAR(startdate, 'MM/DD/YYYY') AS startdate, TO_CHAR(enddate, 'MM/DD/YYYY') AS enddate, goalsscored, apparences, goalsconceded AS enddate FROM PLAYER_CARREER WHERE IDPlayer = ? ORDER BY STARTDATE DESC";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idPlayer);
@@ -506,6 +531,98 @@ public class Query {
         }finally {
             DBconnection.disconnect(connection);
             return idTeam;
+        }
+    }
+    //Queries on Awards
+    public int insertAward(Award awardRequest) {
+        int awardId = -1;
+        Connection connection = DBconnection.connect();
+        String query = "";
+        if(awardRequest.getIdPlayer() == -1) {
+            query = "INSERT INTO AWARDS(WinDate, Name, IdTeam) VALUES(?,?,?) RETURNING IDAWARD";
+        }
+        else {
+            query = "INSERT INTO AWARDS(WinDate, Name, IdPlayer) VALUES(?,?,?) RETURNING IDAWARD";
+        }
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setDate(1, new java.sql.Date(awardRequest.getWinDate().getTime()));
+            statement.setString(2, awardRequest.getName());
+            if(awardRequest.getIdPlayer() != -1) {
+                statement.setInt(3, awardRequest.getIdPlayer());
+            }
+            else {
+                statement.setInt(3, awardRequest.getIdTeam());
+            }
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                awardId = rs.getInt(1);
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return awardId;
+        }
+    }
+    public List<Award> select_palmares_from_player(int idPlayer) {
+        List<Award> awardsResponse = new ArrayList<Award>();
+        int awardId = -1;
+        Connection connection = DBconnection.connect();
+        String query = "(SELECT idaward,name,windate FROM AWARDS WHERE IDPLAYER = ?) UNION (SELECT A.idaward, A.name, A.windate FROM AWARDS A, PLAYER_CARREER PC WHERE A.IDTEAM = PC.IDTEAM AND PC.IDPLAYER = ? AND A.WINDATE BETWEEN PC.STARTDATE AND PC.ENDDATE) ORDER BY WINDATE DESC";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idPlayer);
+            statement.setInt(2, idPlayer);
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            ResultSetMetaData metaData = rs.getMetaData();
+
+            DefaultTableModel tableModel = new DefaultTableModel();
+            int cols = metaData.getColumnCount();
+            for (int i = 2; i <= cols; i++) {
+                String colName = metaData.getColumnName(i);
+                String tableColName = QueryTools.updateColumnName(colName);
+                tableModel.addColumn(tableColName);
+            }
+            String columnName;
+            while (rs.next()) {
+                Object[] rowData = new Object[cols];
+                for (int i = 2; i <= cols; i++) {
+                    columnName = metaData.getColumnName(i);
+                    if (i == 3) {
+                        Date dt = (Date) rs.getObject(columnName);
+                        var formatteddata = dt.toString().substring(5, 7) + "/" + dt.toString().substring(8, 10) + "/" + dt.toString().substring(0, 4);
+                        rowData[i - 2] = formatteddata;
+                    } else rowData[i - 2] = rs.getObject(columnName);
+                }
+                tableModel.addRow(rowData);
+                awardsResponse.add(new Award(rs.getString(2), rs.getDate(3), rs.getInt(1)));
+            }
+            resultsTable.setModel(tableModel);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            DBconnection.disconnect(connection);
+            return awardsResponse;
+        }
+    }
+    public void Delete_award(int idAward) {
+        String query = "DELETE FROM AWARDS WHERE IDAWARD = ?";
+        Connection connection = DBconnection.connect();
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idAward);
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
         }
     }
 }

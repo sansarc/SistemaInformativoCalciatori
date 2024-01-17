@@ -24,7 +24,7 @@
           <component id="51fcb" class="javax.swing.JTable" binding="resultsTable">
             <constraints/>
             <properties>
-              <autoCreateRowSorter value="true"/>
+              <autoCreateRowSorter value="false"/>
               <dropMode value="USE_SELECTION"/>
               <enabled value="false"/>
               <name value=""/>
@@ -247,12 +247,12 @@
                   <text value="Add Player"/>
                 </properties>
               </component>
-              <component id="761f0" class="javax.swing.JButton" binding="button2" default-binding="true">
+              <component id="761f0" class="javax.swing.JButton" binding="addAwardsButton" default-binding="true">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Button"/>
+                  <text value="Add Awards"/>
                 </properties>
               </component>
               <component id="7bf4b" class="javax.swing.JButton" binding="editTeamButton" default-binding="true">

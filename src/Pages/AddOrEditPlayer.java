@@ -200,7 +200,7 @@ public class AddOrEditPlayer extends JFrame {
                     player_i.setName(playerName.getText());
                     player_i.setLastName(playerLastName.getText());
                     player_i.setPosition(positions);
-                    new Pages.AddOrModifyCarreer(player_i);
+                    new Pages.AddOrEditCarreer(player_i);
                     dispose();
                 }
             }
