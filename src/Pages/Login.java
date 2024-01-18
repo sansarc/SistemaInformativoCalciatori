@@ -66,7 +66,6 @@ public class Login extends JFrame {
                     JOptionPane.showMessageDialog(null, "This email is already in use. Please choose a different one.", "Sign up", JOptionPane.ERROR_MESSAGE);
             }
         });
-
     }
 
     private boolean blankCredentials(String u_name, String pwd) {

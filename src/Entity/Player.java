@@ -11,7 +11,7 @@ public class Player {
     protected byte[] image;
     protected int idPlayer;
 
-    public Player(String _name, String _lastName, String _position, Date _dateOfBirth, Date _retirementDate, char _foot, int _goals, int _goalsConceded)
+    public Player(String _name, String _lastName, String _position, Date _dateOfBirth, Date _retirementDate, char _foot)
     {
         name = _name;
         lastName = _lastName;

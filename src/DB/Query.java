@@ -19,22 +19,15 @@ public class Query {
         this.resultsTable = resultsTable;
     }
     //Queries on Player
-    public List<Integer> queryPlayers(String name, String lastname, char ageMath, String age, List<String> positions, char foot, boolean isRetired, String team, boolean isFromMain) {
+    public List<Integer> queryPlayers(Player_Profile playerRequest, Team actualTeam, boolean freeagent, boolean retired,
+                                      List<String> positions, char goals_c, char conceded_c, char apparences_c, char age_c, int age, String feature, boolean isFromMain) {
         Connection connection = DBconnection.connect();
-        String query = QueryTools.getQuery(name, lastname, ageMath, age, positions, foot, isRetired, team);
+        String query = QueryTools.getQuerySearchPlayer(playerRequest, actualTeam, freeagent, retired, positions, goals_c, conceded_c, apparences_c, age_c, feature, age, null);
         List<Integer> ids = new ArrayList<>();
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             int index = 1;
-            if (!name.isBlank()) statement.setString(index++, "%" + name + "%");
-            if (!lastname.isBlank()) statement.setString(index++, "%" + lastname + "%");
-            if (!positions.isEmpty()) {
-                for (String i : positions) statement.setString(index++, "%" + i + "%");
-            }
-            if (!age.isBlank()) statement.setInt(index++, Integer.parseInt(age));
-            if (Character.isLetter(foot)) statement.setString(index++, Character.toString(foot));
-            if (!team.isBlank()) statement.setString(index, "%" + team + "%");
-
+            QueryTools.getQuerySearchPlayer(playerRequest, actualTeam, freeagent, retired, positions, goals_c, conceded_c, apparences_c, age_c, feature, age, statement);
             System.out.println(statement);
             ResultSet rs = statement.executeQuery();
             ResultSetMetaData metaData = rs.getMetaData();
@@ -53,7 +46,7 @@ public class Query {
                 for (int i = 1; i <= cols-1; i++) {
                     columnName = metaData.getColumnName(i);
                     if (i == 2) rowData[i - 1] = "<html><b>" + rs.getObject(columnName) + "</b></html>";
-                    else if (i == 3 && isRetired) rowData[i - 1] = "";
+                    else if (i == 3 && retired) rowData[i - 1] = "";
                     else rowData[i - 1] = rs.getObject(columnName);
                 }
                 columnName = metaData.getColumnName(cols);
@@ -75,7 +68,8 @@ public class Query {
         return ids;
     }
     public int InsertPlayer(Player playerRequest) {
-        var resp = queryPlayers(playerRequest.getName(), playerRequest.getLastName(), '=', String.valueOf(playerRequest.getAge(false)), Arrays.stream(((playerRequest.getPosition()).split(","))).toList(), playerRequest.getFoot(), false, "", false);
+        var resp = queryPlayers((Player_Profile)playerRequest, null, false, false, null, '\0','\0','\0','\0',-1,null,false);
+        //var resp = queryPlayers(playerRequest.getName(), playerRequest.getLastName(), '=', String.valueOf(playerRequest.getAge(false)), Arrays.stream(((playerRequest.getPosition()).split(","))).toList(), playerRequest.getFoot(), false, "", false);
         if (!resp.isEmpty()) {
             int choice = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
             if (choice == JOptionPane.YES_OPTION)
@@ -588,6 +582,25 @@ public class Query {
             ex.printStackTrace();
         }finally {
             DBconnection.disconnect(connection);
+        }
+    }
+    //Queries on Features
+    public List<String> selectAllFeatures() {
+        List<String> features = new ArrayList<String>();
+        String query = "SELECT feature_name FROM FEATURES";
+        Connection connection = DBconnection.connect();
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            var rs = statement.executeQuery();
+            while(rs.next()) {
+                features.add(rs.getString(1));
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return features;
         }
     }
 }
