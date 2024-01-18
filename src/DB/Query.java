@@ -41,7 +41,7 @@ public class Query {
 
             DefaultTableModel tableModel = new DefaultTableModel();
             int cols = metaData.getColumnCount();
-            for (int i = 1; i <= cols; i++) {
+            for (int i = 1; i <= cols-1; i++) {
                 String colName = metaData.getColumnName(i);
                 String tableColName = QueryTools.updateColumnName(colName);
                 tableModel.addColumn(tableColName);
@@ -50,7 +50,7 @@ public class Query {
             String columnName;
             while (rs.next()) {
                 Object[] rowData = new Object[cols];
-                for (int i = 1; i <= cols; i++) {
+                for (int i = 1; i <= cols-1; i++) {
                     columnName = metaData.getColumnName(i);
                     if (i == 2) rowData[i - 1] = "<html><b>" + rs.getObject(columnName) + "</b></html>";
                     else if (i == 3 && isRetired) rowData[i - 1] = "";
@@ -58,7 +58,7 @@ public class Query {
                 }
                 columnName = metaData.getColumnName(cols);
                 ids.add(rs.getInt(columnName));
-                rowData[cols - 1] = "<html><u>full profile</u></html>"; // Note: Use cols instead of cols - 1
+                //rowData[cols - 1] = "<html><u>full profile</u></html>"; // Note: Use cols instead of cols - 1
                 tableModel.addRow(rowData);
             }
             if(isFromMain)
@@ -86,25 +86,6 @@ public class Query {
         }
         return -1;
     }
-    public boolean DeletePlayer(int playerId) {
-        Connection connection = DBconnection.connect();
-        boolean r = false;
-        String query = "DELETE FROM PLAYERS WHERE idPlayer = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, playerId);
-            System.out.println(statement);
-            var rs = statement.executeQuery();
-            r = true;
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }finally {
-            DBconnection.disconnect(connection);
-            return r;
-        }
-    }
-
     public int UpldatePlayer(Player playerRequest) {
         int idPlayer = -1;
         Connection connection = DBconnection.connect();
@@ -330,25 +311,6 @@ public class Query {
             return teams;
         }
     }
-    public boolean DeleteTeam(int idTeam) {
-        Connection connection = DBconnection.connect();
-        String query = "DELETE FROM TEAMS WHERE idTeam = ?";
-        boolean r = false;
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, idTeam);
-            System.out.println(statement);
-            var rs = statement.executeQuery();
-            r = true;
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }finally {
-            DBconnection.disconnect(connection);
-            return r;
-        }
-    }
-
     public int update_team(Team team) {
         int idTeam = -1;
         Connection connection = DBconnection.connect();
@@ -441,9 +403,10 @@ public class Query {
         }
 
     }
-    public void select_player_carreer(int idPlayer, boolean isGoalkeeper) {
+    public List<Integer> select_player_carreer(int idPlayer, boolean isGoalkeeper) {
+        List<Integer> ids = new ArrayList<Integer>();
         Connection connection = DBconnection.connect();
-        String query = "SELECT idteam,team_name,TO_CHAR(startdate, 'MM/DD/YYYY') AS startdate, TO_CHAR(enddate, 'MM/DD/YYYY') AS enddate, goalsscored, apparences, goalsconceded AS enddate FROM PLAYER_CARREER WHERE IDPlayer = ? ORDER BY STARTDATE DESC";
+        String query = "SELECT idTransfer,team_name,TO_CHAR(startdate, 'MM/DD/YYYY') AS startdate, TO_CHAR(enddate, 'MM/DD/YYYY') AS enddate, goalsscored, apparences, goalsconceded AS enddate FROM PLAYER_CARREER WHERE IDPlayer = ? ORDER BY STARTDATE DESC";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idPlayer);
@@ -467,6 +430,7 @@ public class Query {
                     if (i == 2) rowData[i - 2] = "<html><b>" + rs.getObject(columnName) + "</b></html>";
                     else rowData[i - 2] = rs.getObject(columnName);
                 }
+                ids.add(rs.getInt(1));
                 tableModel.addRow(rowData);
             }
             resultsTable.setModel(tableModel);
@@ -477,6 +441,7 @@ public class Query {
             ex.printStackTrace();
         } finally {
             DBconnection.disconnect(connection);
+            return ids;
         }
     }
     public int insert_team(Team teamRequest) {
@@ -610,11 +575,11 @@ public class Query {
             return awardsResponse;
         }
     }
-    public void Delete_award(int idAward) {
-        String query = "DELETE FROM AWARDS WHERE IDAWARD = ?";
+    public void DeleteFromId(String tableName, String idName, int idValue){
+        String query = "DELETE FROM " + tableName + " WHERE " + idName + " = ?";
         Connection connection = DBconnection.connect();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, idAward);
+            statement.setInt(1, idValue);
             System.out.println(statement);
             var rs = statement.executeQuery();
         } catch (SQLException se) {

@@ -88,15 +88,15 @@ public class EditTeam extends JFrame {
                         break;
                     }
                 }
-                var r = query.DeleteTeam(team.getId());
-                if(r) {
+                /*var r = */query.DeleteFromId("TEAM", "idteam", team.getId());
+                /*if(r) {
                     JOptionPane.showMessageDialog(null, "Team eliminato", "Invalid Search", JOptionPane.WARNING_MESSAGE);
                     dispose();
                 }
                 else {
                     JOptionPane.showMessageDialog(null, "Team non eliminato", "Invalid Search", JOptionPane.WARNING_MESSAGE);
                     dispose();
-                }
+                }*/
 
             }
         });

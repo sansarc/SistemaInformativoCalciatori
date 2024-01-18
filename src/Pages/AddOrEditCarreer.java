@@ -4,6 +4,8 @@ import DB.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,7 @@ public class AddOrEditCarreer extends JFrame {
     private JPanel goalkeeperPanel;
     private JSpinner concededspinner;
     private JSpinner apparencesSpinner;
+    List<Integer> ids;
 
     public AddOrEditCarreer(Player player) {
         setContentPane(panel);
@@ -39,6 +42,7 @@ public class AddOrEditCarreer extends JFrame {
             setTitle("SIC - View Carreer of " + player.getName() + " " + player.getLastName());
         }
 
+        ids = new ArrayList<Integer>();
         Query query = new Query(carreerTable);
         List<String> nations = query.SelectAllNationsForTeams();
         List<String> levels = new ArrayList<String>();
@@ -50,7 +54,7 @@ public class AddOrEditCarreer extends JFrame {
         selectTeamBox.setEnabled(false);
         insertButton.setEnabled(false);
         goalkeeperPanel.setVisible(player.getPosition().contains("G"));
-        query.select_player_carreer(player.getId(), goalkeeperPanel.isVisible());
+        ids = query.select_player_carreer(player.getId(), goalkeeperPanel.isVisible());
         selectNationBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -117,7 +121,7 @@ public class AddOrEditCarreer extends JFrame {
                     }
                     else {
                         JOptionPane.showMessageDialog(null, "Record inserito con successo!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        query.select_player_carreer(player.getId(), goalkeeperPanel.isVisible());
+                        ids = query.select_player_carreer(player.getId(), goalkeeperPanel.isVisible());
                     }
                 }
                 else {
@@ -125,6 +129,17 @@ public class AddOrEditCarreer extends JFrame {
                 }
             }
         });
+        carreerTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = carreerTable.rowAtPoint(e.getPoint());
+                JOptionPane.showMessageDialog(null, "selezionato " + ids.get(row), "Invalid Search", JOptionPane.WARNING_MESSAGE);
+                if(Login.user_type == 'A') {
+                    query.DeleteFromId("PLAYER_TEAM", "idtransfer", ids.get(row));
+                }
+            }
+        });
+
     }
 
 }

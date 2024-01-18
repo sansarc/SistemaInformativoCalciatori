@@ -17,7 +17,9 @@
         <children>
           <component id="431b3" class="javax.swing.JTable" binding="awardsTable">
             <constraints/>
-            <properties/>
+            <properties>
+              <enabled value="false"/>
+            </properties>
           </component>
         </children>
       </scrollpane>

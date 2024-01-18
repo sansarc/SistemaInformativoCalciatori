@@ -109,7 +109,7 @@ public class Main extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int row = resultsTable.rowAtPoint(e.getPoint());
                 int col = resultsTable.columnAtPoint(e.getPoint());
-                if (row >= 0 && col == 3) new Profile(ids.get(row));
+                new Profile(ids.get(row));
             }
         });
         clearButton.addActionListener(new ActionListener() {

@@ -97,15 +97,15 @@ public class Profile extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int choice = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    boolean r = query.DeletePlayer(player.getId());
-                    if(r) {
+                    /*boolean r =*/ query.DeleteFromId("PLAYERS", "idplayer", player.getId());
+                    /*if(r) {
                         JOptionPane.showMessageDialog(null, "Calciatore eliminato", "Invalid Search", JOptionPane.WARNING_MESSAGE);
                         dispose();
                     }
                     else {
                         JOptionPane.showMessageDialog(null, "Calciatore non eliminato", "Invalid Search", JOptionPane.WARNING_MESSAGE);
                         dispose();
-                    }
+                    }*/
                 }
 
             }
