@@ -7,11 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
-// TODO: profilo militanza del giocatore quando si clicca sull'ID dalla tabella di ricerca
-// TODO: sistema login e profili
-// TODO: sistema inserimento e modifica dati in base al profilo
-// TODO: logout button?
-
 public class Login extends JFrame {
     private JPanel panel;
     private JPasswordField password;

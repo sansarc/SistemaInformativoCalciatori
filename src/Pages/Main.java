@@ -2,7 +2,6 @@ package Pages;
 
 import DB.Query;
 import DB.QueryTools;
-import Entity.Player;
 import Entity.Player_Profile;
 import Entity.Team;
 
@@ -13,11 +12,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-
-// TODO: profilo militanza del giocatore quando si clicca sull'ID dalla tabella di ricerca
-// TODO: sistema login e profili
-// TODO: sistema inserimento e modifica dati in base al profilo
-// TODO: per identificare il login nel Main, aggiungere "Ciao, utente!"?. Si deve passare come argomento anche il nome utente nella classe
 
 public class Main extends JFrame {
     private JPanel panel;
@@ -37,9 +31,7 @@ public class Main extends JFrame {
     private JCheckBox defenderCheckBox;
     private JCheckBox goalkeeperCheckBox;
     private JButton clearButton;
-    private JPanel adminPanel;
     private JLabel userGreetLabel;
-    private JButton logoutButton;
     private JComboBox nationComboBox;
     private JComboBox levelComboBox;
     private JComboBox teamComboBox;
@@ -57,13 +49,14 @@ public class Main extends JFrame {
     private JSpinner apparencesSpinner;
     private JCheckBox freeagentCheckBox;
     private JPanel filterPanel;
-    private JButton button1;
-    private JButton button2;
-    private JButton button3;
-    private JButton button4;
-    private JButton button5;
-    private JButton button6;
-    private JButton button7;
+    private JButton logoutButton;
+    private JButton editProfileButton;
+    private JPanel adminPanel;
+    private JButton addPlayerButton;
+    private JButton addEditFeaturesButton;
+    private JButton addTeamButton;
+    private JButton editTeamButton;
+    private JButton addAwardsButton;
     private Query query;
     List<Integer> ids;
 
@@ -74,9 +67,8 @@ public class Main extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
-        //adminPanel.setVisible(Login.user_type == 'A');
+        adminPanel.setVisible(Login.user_type == 'A');
         userGreetLabel.setText("<html> Hi, <b>" + username + "</b>! </html>");
-        concededSpinner.setEnabled(false);
         String[] footOpt = {"\0", "Left", "Right", "Ambidextrous"};
         for (String i : footOpt) footComboBox.addItem(i);
         char[] comboBoxOperator = {'\0','=', '>', '<'};
@@ -93,19 +85,13 @@ public class Main extends JFrame {
         for (var n : nations) {
             nationComboBox.addItem(n);
         }
-        levelComboBox.setEnabled(false);
-        teamComboBox.setEnabled(false);
         List<String> features = new ArrayList<String>();
         features.add("\0");
         features.addAll(query.selectAllFeatures());
         for(var f : features) {
             featureComboBox.addItem(f);
         }
-        concededComboBox.setEnabled(false);
-        concededSpinner.setEnabled(false);
-        ageSpinner.setEnabled(false);
-        apparencesSpinner.setEnabled(false);
-        goalsSpinner.setEnabled(false);
+        InitFilter();
         goalsComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -254,69 +240,65 @@ public class Main extends JFrame {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<String> positions = getCheckedPositions();
-                String name = nameTextField.getText();
-                String lastname = lastnameTextField.getText();
-                char foot;
-                if (footComboBox.getSelectedItem().equals("Right")) foot = 'R';
-                else if (footComboBox.getSelectedItem().equals("Left")) foot = 'L';
-                else if (footComboBox.getSelectedItem().equals("Ambidextrous")) foot = 'A';
-                else foot = '\0';
-                char ageMath = (char) ageComboBox.getSelectedItem();
-                String age = ageSpinner.getValue().toString();
-                boolean isRetired = retiredCheckBox.isSelected();
-                String team = "";//teamTextField.getText();
-
-
-                Player_Profile player = new Player_Profile(name, lastname, null, null, null, foot, Integer.parseInt(goalsSpinner.getValue().toString()), Integer.parseInt(concededSpinner.getValue().toString()), Integer.parseInt(apparencesSpinner.getValue().toString()));
-                //player.setGoals();
-                //player.setGoalsConceded();
-                //player.setApparences();
-                ids = query.queryPlayers(player,
-                    new Team(
-                    (teamComboBox.getSelectedIndex() > 0) ? teamComboBox.getSelectedItem().toString() : "",
-                    (nationComboBox.getSelectedIndex() > 0) ? nationComboBox.getSelectedItem().toString() : "",
-                    (levelComboBox.getSelectedIndex() > 0) ? Integer.parseInt(levelComboBox.getSelectedItem().toString()) : -1, -1),
-                    freeagentCheckBox.isSelected(), retiredCheckBox.isSelected(), positions, goalsComboBox.getSelectedItem().toString().charAt(0),
-                    concededComboBox.getSelectedItem().toString().charAt(0), apparencesComboBox.getSelectedItem().toString().charAt(0), ageComboBox.getSelectedItem().toString().charAt(0),
-                    Integer.parseInt(ageSpinner.getValue().toString()), (featureComboBox.getSelectedIndex() > 0) ? featureComboBox.getSelectedItem().toString() : "", true);
-                    //ids = query.queryPlayers(name, lastname, ageMath, age, positions, foot, isRetired, team, true);
+                if(isFormOk()) {
+                    List<String> positions = getCheckedPositions();
+                    String name = nameTextField.getText();
+                    String lastname = lastnameTextField.getText();
+                    char foot = (footComboBox.getSelectedIndex() > 0) ? footComboBox.getSelectedItem().toString().charAt(0) : '\0';
+                    Player_Profile player = new Player_Profile(name, lastname, null, null, null, foot, Integer.parseInt(goalsSpinner.getValue().toString()), Integer.parseInt(concededSpinner.getValue().toString()), Integer.parseInt(apparencesSpinner.getValue().toString()));
+                    ids = query.queryPlayers(player,
+                            (nationComboBox.getSelectedIndex() > 0) ? new Team(
+                                    (teamComboBox.getSelectedIndex() > 0) ? teamComboBox.getSelectedItem().toString() : "",
+                                    nationComboBox.getSelectedItem().toString(),
+                                    (levelComboBox.getSelectedIndex() > 0) ? Integer.parseInt(levelComboBox.getSelectedItem().toString()) : -1, -1) : null,
+                            freeagentCheckBox.isSelected(), retiredCheckBox.isSelected(), positions, goalsComboBox.getSelectedItem().toString().charAt(0),
+                            concededComboBox.getSelectedItem().toString().charAt(0), apparencesComboBox.getSelectedItem().toString().charAt(0), ageComboBox.getSelectedItem().toString().charAt(0),
+                            Integer.parseInt(ageSpinner.getValue().toString()), (featureComboBox.getSelectedIndex() > 0) ? featureComboBox.getSelectedItem().toString() : "", true);
+                }
             }
         });
-        //select pc.idPlayer, pc.name, pc.lastname from player_carreer pc where
-        //if name -> pc.player_name LIKE '%?%'
-        //if lastname -> pc.lastname LIKE '%?%'
-        //if free agent ->
-        //else if(retired) retireddate is not null
-        //else if(team) -> join teams t -- t.name = '?', t.nation = '?' t.enddate is null
-        //if leveOfTeam -> join teams t -- t.nation = ?, t.level = ? t.enddate is null
-        //if(positions) ->
-        //if goalscsored/concedd/apparences -> sum(...) > ?
-        //if(foot) substring 0,1 foot = ?
-        //if age //già fatto
-        //if features -> join player_features f on f.idplayer = pc.idplayer -- f.idFeatures = ?
+        addPlayerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AddOrEditPlayer(null);
+            }
+        });
+        addTeamButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AddTeam();
+            }
+        });
+        editTeamButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new EditTeam();
+            }
+        });
+        addAwardsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AddAwards();
+            }
+        });
+        addEditFeaturesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //
+            }
+        });
         resultsTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int row = resultsTable.rowAtPoint(e.getPoint());
-                int col = resultsTable.columnAtPoint(e.getPoint());
+                //int col = resultsTable.columnAtPoint(e.getPoint());
                 new Profile(ids.get(row));
             }
         });
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                nameTextField.setText("");
-                lastnameTextField.setText("");
-                //teamTextField.setText("");
-                forwardCheckBox.setSelected(false);
-                midfielderCheckBox.setSelected(false);
-                defenderCheckBox.setSelected(false);
-                goalkeeperCheckBox.setSelected(false);
-                footComboBox.setSelectedIndex(0);
-                //ageTextField.setText("");
-                retiredCheckBox.setSelected(false);
-                ageComboBox.setSelectedIndex(0);
+                InitFilter();
             }
         });
         logoutButton.addActionListener(new ActionListener() {
@@ -337,15 +319,29 @@ public class Main extends JFrame {
         return positions;
     }
 
-    private int isFormOk(List<String> position, String name, String lastname, char foot, String age, Boolean isRetired, String team) {
-        if (position.isEmpty() && name.isBlank() && lastname.isBlank() && age.isEmpty() && foot == '\0' && !isRetired && team.isBlank()) return 1;
-        else if (!age.isEmpty() && Character.isLetter(age.charAt(0))) return 2;
-        return 0;
+    private boolean isFormOk() {
+        int ret;
+        if (nameTextField.getText().isBlank() && lastNameLabel.getText().isBlank()
+                && teamComboBox.getSelectedIndex() < 1 && levelComboBox.getSelectedIndex() < 1 && nationComboBox.getSelectedIndex() < 1
+                && !retiredCheckBox.isSelected()  && !freeagentCheckBox.isSelected()
+                && getCheckedPositions().isEmpty()
+                && !goalsSpinner.isEnabled() && !concededSpinner.isEnabled() && !apparencesSpinner.isEnabled()
+                && footComboBox.getSelectedIndex() < 1 && !ageSpinner.isEnabled() && featureComboBox.getSelectedIndex() < 1
+        ) ret = 1;
+        else if (Integer.parseInt(ageSpinner.getValue().toString()) < 0) ret = 2;
+        else if (Integer.parseInt(goalsSpinner.getValue().toString()) < 0) ret = 3;
+        else if (Integer.parseInt(concededSpinner.getValue().toString()) < 0) ret = 4;
+        else if (Integer.parseInt(apparencesSpinner.getValue().toString()) < 0) ret = 5;
+        else ret = 0;
+        return showMessagePanel(ret);
     }
 
-    public static boolean showMessagePanel(JFrame component, int code) {
-        if (code == 1) JOptionPane.showMessageDialog(component, "Invalid search, form can't be empty", "Invalid Search", JOptionPane.WARNING_MESSAGE);
-        else if (code == 2) JOptionPane.showMessageDialog(component, "Age field has to be a number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+    private boolean showMessagePanel(int code) {
+        if (code == 1) JOptionPane.showMessageDialog(null, "Invalid search, form can't be empty", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+        else if (code == 2) JOptionPane.showMessageDialog(null, "Age spinner has to be a not negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+        else if (code == 3) JOptionPane.showMessageDialog(null, "Goals scored spinner has to a not negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+        else if (code == 4) JOptionPane.showMessageDialog(null, "Goals conceded field has to a not negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+        else if (code == 5) JOptionPane.showMessageDialog(null, "Apparences has to be a not negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
         return code == 0;
     }
     private void verify_roles() {
@@ -358,6 +354,38 @@ public class Main extends JFrame {
         {
             goalkeeperCheckBox.setEnabled(true);
         }
+    }
+    private void InitFilter() {
+        nameTextField.setText("");
+        lastNameLabel.setText("");
+        retiredCheckBox.setSelected(false);
+        freeagentCheckBox.setSelected(false);
+        forwardCheckBox.setSelected(false);
+        midfielderCheckBox.setSelected(false);
+        defenderCheckBox.setSelected(false);
+        goalkeeperCheckBox.setSelected(false);
+        goalsComboBox.setSelectedIndex(0);
+        concededComboBox.setSelectedIndex(0);
+        apparencesComboBox.setSelectedIndex(0);
+        footComboBox.setSelectedIndex(0);
+        ageComboBox.setSelectedIndex(0);
+        featureComboBox.setSelectedIndex(0);
+        nationComboBox.setSelectedIndex(0);
+        freeagentCheckBox.setEnabled(true);
+        retiredCheckBox.setEnabled(true);
+        concededSpinner.setEnabled(false);
+        levelComboBox.setEnabled(false);
+        teamComboBox.setEnabled(false);
+        concededComboBox.setEnabled(false);
+        concededSpinner.setEnabled(false);
+        ageSpinner.setEnabled(false);
+        apparencesSpinner.setEnabled(false);
+        goalsSpinner.setEnabled(false);
+        goalkeeperCheckBox.setEnabled(true);
+        defenderCheckBox.setEnabled(true);
+        midfielderCheckBox.setEnabled(true);
+        forwardCheckBox.setEnabled(true);
+
     }
 
 }

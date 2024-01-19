@@ -11,7 +11,7 @@ public class QueryTools {
     public static String getQuerySearchPlayer(Player_Profile playerRequest, Entity.Team actualTeam, boolean freeagent, boolean retired,
                                                 List<String> positions, char goals_c, char conceded_c, char apparences_c, char age_c, String feature, int age, PreparedStatement statement) {
 
-        String query = "SELECT DISTINCT p.player_name, p.lastname, pc.team_name, p.idPlayer FROM  PLAYER_PROFILE P LEFT JOIN PLAYER_CARREER PC ON PC.IDPLAYER = P.IDPLAYER LEFT JOIN TEAMS T ON T.IDTEAM = PC.IDTEAM LEFT JOIN PLAYER_FEATURE F ON F.IDPLAYER = P.IDPLAYER ";
+        String query = "SELECT DISTINCT p.player_name, p.lastname";
         try {
         String whereString = "";
         boolean conditional_and = false;
@@ -36,45 +36,44 @@ public class QueryTools {
                 statement.setString(++index,"%" + playerRequest.getLastName() +"%");
             }
         }
-        if(actualTeam != null) {
-            if(conditional_and) whereString += "AND ";
-            whereString += "PC.ENDDATE IS NOT NULL AND ";
-            if(!actualTeam.getName().isBlank()) {
-                if(forQuery) {
-                    whereString += "PC.TEAM_NAME = ? AND T.NATION = ? ";
-                }
-                else {
-                    statement.setString(++index, actualTeam.getName());
-                    statement.setString(++index, actualTeam.getNationality());
-                }
-            }
-            else if(actualTeam.getCategory() > 0 ) {
-                if(forQuery) {
-                    whereString += "T.NATION = ? AND T.LEVEL = ? ";
-                }
-                else {
-                    statement.setString(++index, actualTeam.getNationality());
-                    statement.setInt(++index, actualTeam.getCategory());
-                }
-            }
-            else {
-                if(forQuery) {
-                    whereString += "T.NATION = ? ";
-                }
-                else {
-                    statement.setString(++index, actualTeam.getNationality());
-                }
-            }
-            conditional_and = true;
-        }
-        else if(freeagent) {
+        if(freeagent || retired) {
             if (conditional_and) whereString += "AND ";
-            whereString += "PC.ENDDATE IS NOT NULL ";
+            whereString += "NOT EXISTS (SELECT * FROM PLAYER_CARREER PC2 WHERE PC2.IDPLAYER = P.IDPLAYER AND PC2.ENDDATE IS NULL) ";
+            whereString += (retired) ? "AND P.RETIREMENTDATE IS NOT NULL " : "AND P.RETIREMENTDATE IS NULL ";
             conditional_and = true;
         }
-        else if(retired) {
+        else {
+            query += ", pc.team_name";
             if(conditional_and) whereString += "AND ";
-            whereString += "P.RETIREMENTDATA IS NOT NULL";
+            whereString += "PC.ENDDATE IS NULL ";
+            if(actualTeam != null) {
+                if(!actualTeam.getName().isBlank()) {
+                    if(forQuery) {
+                        whereString += "AND PC.TEAM_NAME = ? AND T.NATION = ? ";
+                    }
+                    else {
+                        statement.setString(++index, actualTeam.getName());
+                        statement.setString(++index, actualTeam.getNationality());
+                    }
+                }
+                else if(actualTeam.getCategory() > 0 ) {
+                    if(forQuery) {
+                        whereString += "AND T.NATION = ? AND T.LEVEL = ? ";
+                    }
+                    else {
+                        statement.setString(++index, actualTeam.getNationality());
+                        statement.setInt(++index, actualTeam.getCategory());
+                    }
+                }
+                else {
+                    if(forQuery) {
+                        whereString += "AND T.NATION = ? ";
+                    }
+                    else {
+                        statement.setString(++index, actualTeam.getNationality());
+                    }
+                }
+            }
             conditional_and = true;
         }
         if (!positions.isEmpty()) {
@@ -148,7 +147,7 @@ public class QueryTools {
                 statement.setString(++index, feature);
             }
         }
-        query += "WHERE " + whereString;
+        query += ", p.idPlayer FROM  PLAYER_PROFILE P LEFT JOIN PLAYER_CARREER PC ON PC.IDPLAYER = P.IDPLAYER LEFT JOIN TEAMS T ON T.IDTEAM = PC.IDTEAM LEFT JOIN PLAYER_FEATURE F ON F.IDPLAYER = P.IDPLAYER WHERE " + whereString;
 
         //select pc.idplayer, pc.player_name, pc.lastname from player_carreer pc join teams t on t.idteam = pc.idteam join player_profile pp on pc.idplayer = pp.idplayer join player_feature f on f.idplayer = pc.idplayer where pc.player_name LIKE 'Vittorio' AND pc.lastname LIKE 'Osimenno' and t.team_name = 'SSC NAPOLI' and t.nation = 'IT' and pc.enddate is null AND pp.goalsscored > 80 and f.idfeature = 'head shot'
 
