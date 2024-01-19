@@ -58,7 +58,7 @@ public class AddOrEditFeature extends JFrame {
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                query.DeleteFromId("FEATURES", "FEATURE_NAME", feature.getName());
+                query.DeleteFromId("FEATURE", "FEATURE_NAME", feature.getName());
             }
         });
     }

@@ -18,6 +18,28 @@ public class Query {
     public Query(JTable resultsTable) {
         this.resultsTable = resultsTable;
     }
+    public boolean ChangePassword(String email, String oldPwd, String newPwd) {
+        int ret = -1;
+        Connection connection = DBconnection.connect();
+        String query = "SELECT CHANGE_USER_PASSWORD(?,?,?)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, email);
+            statement.setString(2, oldPwd);
+            statement.setString(3, newPwd);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()) {
+                ret = rs.getInt(1);
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            DBconnection.disconnect(connection);
+            return (ret == 0);
+        }
+
+    }
     //Queries on Player
     public List<Integer> queryPlayers(Player_Profile playerRequest, Team actualTeam, boolean freeagent, boolean retired,
                                       List<String> positions, char goals_c, char conceded_c, char apparences_c, char age_c, int age, String feature, boolean isFromMain) {
@@ -69,7 +91,6 @@ public class Query {
     }
     public int InsertPlayer(Player playerRequest) {
         var resp = queryPlayers((Player_Profile)playerRequest, null, false, false, null, '\0','\0','\0','\0',-1,null,false);
-        //var resp = queryPlayers(playerRequest.getName(), playerRequest.getLastName(), '=', String.valueOf(playerRequest.getAge(false)), Arrays.stream(((playerRequest.getPosition()).split(","))).toList(), playerRequest.getFoot(), false, "", false);
         if (!resp.isEmpty()) {
             int choice = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
             if (choice == JOptionPane.YES_OPTION)
@@ -83,7 +104,7 @@ public class Query {
     public int UpldatePlayer(Player playerRequest) {
         int idPlayer = -1;
         Connection connection = DBconnection.connect();
-        String query = "UPDATE PLAYERS SET Player_Name = ?,Lastname = ?,birthdate = ?,foot = ?,positions = ? WHERE idPlayer = ? RETURNING IDPLAYER";
+        String query = "UPDATE PLAYER SET Player_Name = ?,Lastname = ?,birthdate = ?,foot = ?,positions = ? WHERE idPlayer = ? RETURNING IDPLAYER";
         if(playerRequest.getRetirementDate() != null) {
             query += ", retirementDate = ?";
         }
@@ -114,7 +135,7 @@ public class Query {
     private int InsertPlayer_query(Player playerRequest) {
         int idPlayer = -1;
         Connection connection = DBconnection.connect();
-        String query = "INSERT INTO PLAYERS(player_name, lastname, birthdate, foot, positions) VALUES(?,?,?,?,?) RETURNING IDPLAYER";
+        String query = "INSERT INTO PLAYER(player_name, lastname, birthdate, foot, positions) VALUES(?,?,?,?,?) RETURNING IDPLAYER";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, playerRequest.getName());
             statement.setString(2, playerRequest.getLastName());
@@ -167,9 +188,30 @@ public class Query {
             return player;
         }
     }
+    public int insertPlayerFeature(int idPlayer, String idFeature) {
+        int idPlayerRet = -1;
+        Connection connection = DBconnection.connect();
+        String query = "INSERT INTO PLAYER_FEATURE(IDPLAYER,IDFEATURE) VALUES (?,?) RETURNING IDPLAYER";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idPlayer);
+            statement.setString(2, idFeature);
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                idPlayerRet = rs.getInt(1);
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return idPlayerRet;
+        }
+    }
     public PlayerFeature queryPlayerFeature(int id, Player player) {
         Connection connection = DBconnection.connect();
-        String query = "SELECT feature_name, description, Type_feature  FROM features JOIN player_feature ON features.feature_name = player_feature.idFeature JOIN players ON players.idPlayer = player_feature.idPlayer WHERE players.idPlayer = ?;";
+        String query = "SELECT feature_name, description, Type_feature  FROM feature JOIN player_feature ON feature.feature_name = player_feature.idFeature JOIN player ON player.idPlayer = playe_feature.idPlayer WHERE player.idPlayer = ?;";
         var playerFeature = new PlayerFeature();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
@@ -195,65 +237,77 @@ public class Query {
     }
     //Query on User
     public char Login(String username, String password) {
-        User usr = SelectUser(username, password);
-        if (usr == null)
+        var usrs = SelectUser(username, password, false);
+        if (usrs.isEmpty())
             return '1';
         else
-            return usr.getType();
+            return usrs.get(0).getType();
     }
     public boolean CreateUser(String username, String password) {
-        var respSelect = this.SelectUser(username, "");
-        if (respSelect != null) {
+        var respSelect = this.SelectUser(username, "",false);
+        if (!respSelect.isEmpty()) {
             return false;
         }
         boolean ret = false;
         Connection connection = DBconnection.connect();
-        String query = "INSERT INTO SIC_Users(email, pwd, type_user) VALUES (?, ?, 'U');";
+        String query = "INSERT INTO SIC_User(email, pwd, type_user) VALUES (?, ?, 'U');";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, username);
             statement.setString(2, password);
             System.out.println(statement);
             statement.executeUpdate();
             DBconnection.disconnect(connection);
-            respSelect = this.SelectUser(username, password);
-            ret = respSelect != null;
+            respSelect = this.SelectUser(username, password, false);
+            ret = !respSelect.isEmpty();
         } catch (SQLException se) {
             DBconnection.disconnect(connection);
         }
         return ret;
     }
-    private User SelectUser(String username, String password) {
-        User usr = null;
+    public List<User> SelectUser(String username, String password, boolean onlySimpleUser) {
+        List<User> usrs = new ArrayList<User>();
         Connection connection = DBconnection.connect();
-        String query = "SELECT email, type_user FROM SIC_Users WHERE email = ?";
-        if (password.isBlank())
-            query += ";";
-        else
-            query += " AND pwd = ?;";
+        String query = "SELECT email, type_user FROM SIC_User";
+        boolean first = true;
+        if(onlySimpleUser) {
+            query += " WHERE type_user = 'U' ";
+            first = false;
+        }
+        if(!username.isBlank()) {
+            query += (first) ? " WHERE " : " AND ";
+            query += " email = ? ";
+            if(!password.isBlank()) {
+                query += " AND pwd = ?;";
+            }
+        }
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, username);
-            if (!password.isBlank())
-                statement.setString(2, password);
+            if(!username.isBlank()) {
+                statement.setString(1, username);
+                if(!password.isBlank()) {
+                    statement.setString(2, password);
+                }
+            }
             System.out.println(statement);
             var rs = statement.executeQuery();
-            if (rs.next()) {
-                usr = new User();
+            while (rs.next()) {
+                var usr = new User();
                 usr.setEmail(rs.getString(1));
                 usr.setType(rs.getString(2).charAt(0));
+                usrs.add(usr);
             }
         } catch (SQLException se) {
             se.printStackTrace();
         } finally {
             DBconnection.disconnect(connection);
         }
-        return usr;
+        return usrs;
     }
     //Queries on Team
     public List<String> SelectAllNationsForTeams() {
         List<String> nations = new ArrayList<String>();
         nations.add("");
         Connection connection = DBconnection.connect();
-        String query = "SELECT DISTINCT NATION FROM TEAMS";
+        String query = "SELECT DISTINCT NATION FROM TEAM";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             var rs = statement.executeQuery();
             while (rs.next()) {
@@ -290,7 +344,7 @@ public class Query {
         List<Team> teams = new ArrayList<Team>();
         teams.add(new Team("", nation, level, -1));
         Connection connection = DBconnection.connect();
-        String query = "SELECT TEAM_NAME, NATION, LEVEL, IDTEAM FROM TEAMS WHERE nation = ? and level = ?";
+        String query = "SELECT TEAM_NAME, NATION, LEVEL, IDTEAM FROM TEAM WHERE nation = ? and level = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, nation);
             statement.setInt(2, level);
@@ -308,7 +362,7 @@ public class Query {
     public int update_team(Team team) {
         int idTeam = -1;
         Connection connection = DBconnection.connect();
-        String query = "UPDATE TEAMS SET Level = ? WHERE IDTEAM = ? RETURNING IDTEAM";
+        String query = "UPDATE TEAM SET Level = ? WHERE IDTEAM = ? RETURNING IDTEAM";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, team.getCategory());
             statement.setInt(2, team.getId());
@@ -451,7 +505,7 @@ public class Query {
     private int SearchTeam(Team teamRequest) {
         int idTeam = -1;
         Connection connection = DBconnection.connect();
-        String query = "SELECT idTeam FROM TEAMS WHERE team_name = ? and nation= ?";
+        String query = "SELECT idTeam FROM TEAM WHERE team_name = ? and nation= ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, teamRequest.getName());
             statement.setString(2, teamRequest.getNationality());
@@ -472,7 +526,7 @@ public class Query {
     private int InsertTeam_query(Team teamRequest) {
         int idTeam = -1;
         Connection connection = DBconnection.connect();
-        String query = "INSERT INTO TEAMS(team_name, nation, level) VALUES(?,?,?) RETURNING IDTEAM";
+        String query = "INSERT INTO TEAM(team_name, nation, level) VALUES(?,?,?) RETURNING IDTEAM";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, teamRequest.getName());
             statement.setString(2, teamRequest.getNationality());
@@ -498,10 +552,10 @@ public class Query {
         Connection connection = DBconnection.connect();
         String query = "";
         if(awardRequest.getIdPlayer() == -1) {
-            query = "INSERT INTO AWARDS(WinDate, Name, IdTeam) VALUES(?,?,?) RETURNING IDAWARD";
+            query = "INSERT INTO AWARD(WinDate, Name, IdTeam) VALUES(?,?,?) RETURNING IDAWARD";
         }
         else {
-            query = "INSERT INTO AWARDS(WinDate, Name, IdPlayer) VALUES(?,?,?) RETURNING IDAWARD";
+            query = "INSERT INTO AWARD(WinDate, Name, IdPlayer) VALUES(?,?,?) RETURNING IDAWARD";
         }
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setDate(1, new java.sql.Date(awardRequest.getWinDate().getTime()));
@@ -530,7 +584,7 @@ public class Query {
         List<Award> awardsResponse = new ArrayList<Award>();
         int awardId = -1;
         Connection connection = DBconnection.connect();
-        String query = "(SELECT idaward,name,windate FROM AWARDS WHERE IDPLAYER = ?) UNION (SELECT A.idaward, A.name, A.windate FROM AWARDS A, PLAYER_CARREER PC WHERE A.IDTEAM = PC.IDTEAM AND PC.IDPLAYER = ? AND A.WINDATE BETWEEN PC.STARTDATE AND PC.ENDDATE) ORDER BY WINDATE DESC";
+        String query = "(SELECT idaward,name,windate FROM AWARD WHERE IDPLAYER = ?) UNION (SELECT A.idaward, A.name, A.windate FROM AWARD A, PLAYER_CARREER PC WHERE A.IDTEAM = PC.IDTEAM AND PC.IDPLAYER = ? AND A.WINDATE BETWEEN PC.STARTDATE AND PC.ENDDATE) ORDER BY WINDATE DESC";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idPlayer);
             statement.setInt(2, idPlayer);
@@ -584,6 +638,23 @@ public class Query {
             DBconnection.disconnect(connection);
         }
     }
+    public void DeletePlayerFeature(String idFeature, int idPlayer){
+        String query = "DELETE FROM PLAYER_FEATURE WHERE idPlayer = ? and idFeature = ?";
+        Connection connection = DBconnection.connect();
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idPlayer);
+            statement.setString(2, idFeature);
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+        }
+    }
+
 
     public void DeleteFromId(String tableName, String idName, String idValue){
         String query = "DELETE FROM " + tableName + " WHERE " + idName + " = ?";
@@ -604,7 +675,7 @@ public class Query {
     //Queries on Features
     public List<String> selectAllFeatures() {
         List<String> features = new ArrayList<String>();
-        String query = "SELECT feature_name FROM FEATURES";
+        String query = "SELECT feature_name FROM FEATURE";
         Connection connection = DBconnection.connect();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             var rs = statement.executeQuery();
@@ -624,7 +695,7 @@ public class Query {
     public boolean updateFeature(Feature featureRequest) {
         boolean ok_ = false;
         Connection connection = DBconnection.connect();
-        String query = "UPDATE FEATURES SET DESCRIPTION = ?, TYPE_FEATURE = ? WHERE FEATURE_NAME = ? RETURNING FEATURE_NAME";
+        String query = "UPDATE FEATURE SET DESCRIPTION = ?, TYPE_FEATURE = ? WHERE FEATURE_NAME = ? RETURNING FEATURE_NAME";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, featureRequest.getDescription());
             statement.setString(2, Character.toString(featureRequest.getType()));
@@ -646,7 +717,7 @@ public class Query {
     public boolean insertFeature(Feature featureRequest) {
         boolean ok_ = false;
         Connection connection = DBconnection.connect();
-        String query = "INSERT INTO FEATURES(FEATURE_NAME, DESCRIPTION, TYPE_FEATURE) VALUES (?,?,?) RETURNING FEATURE_NAME";
+        String query = "INSERT INTO FEATURE(FEATURE_NAME, DESCRIPTION, TYPE_FEATURE) VALUES (?,?,?) RETURNING FEATURE_NAME";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, featureRequest.getName());
             statement.setString(2, featureRequest.getDescription());
@@ -668,7 +739,7 @@ public class Query {
     public Feature selectFeature(String feature_name) {
         Feature featureResponse = null;
         Connection connection = DBconnection.connect();
-        String query = "SELECT FEATURE_NAME, DESCRIPTION, TYPE_FEATURE FROM FEATURES WHERE FEATURE_NAME = ?";
+        String query = "SELECT FEATURE_NAME, DESCRIPTION, TYPE_FEATURE FROM FEATURE WHERE FEATURE_NAME = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, feature_name);
             System.out.println(statement);
@@ -685,5 +756,24 @@ public class Query {
             return featureResponse;
         }
     }
-
+    public boolean updateUserType(String email) {
+        boolean ok_ = false;
+        Connection connection = DBconnection.connect();
+        String query = "UPDATE SIC_USER SET TYPE_USER = 'A' WHERE EMAIL = ? RETURNING EMAIL";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, email);
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                ok_ = true;
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return ok_;
+        }
+    }
 }

@@ -25,6 +25,7 @@ public class Profile extends JFrame {
     private JButton deleteButton;
     private JPanel adminPanel;
     private JButton showPalmaresButton;
+    private JButton addFeatureButton;
     private PlayerTransfer playerTransfer;
     private Player_Profile player;
     private PlayerFeature playerFeature;
@@ -88,7 +89,7 @@ public class Profile extends JFrame {
             featureLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    showOptionsDialog(Profile.this, playerFeature.getFeatureList());
+                    showOptionsDialog(Profile.this, playerFeature.getFeatureList(), player.getId());
                 }
             });
         }
@@ -97,7 +98,7 @@ public class Profile extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int choice = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    /*boolean r =*/ query.DeleteFromId("PLAYERS", "idplayer", player.getId());
+                    /*boolean r =*/ query.DeleteFromId("PLAYER", "idplayer", player.getId());
                     /*if(r) {
                         JOptionPane.showMessageDialog(null, "Calciatore eliminato", "Invalid Search", JOptionPane.WARNING_MESSAGE);
                         dispose();
@@ -131,7 +132,7 @@ public class Profile extends JFrame {
         });
     }
 
-    private static void showOptionsDialog(JFrame component, List<Feature> features) {
+    private static void showOptionsDialog(JFrame component, List<Feature> features, int idPlayer) {
         String[] options = new String[features.size()];
         for (int i = 0; i < features.size(); i++) {
             options[i] = features.get(i).getName();
@@ -139,8 +140,8 @@ public class Profile extends JFrame {
 
         int selectedOption = JOptionPane.showOptionDialog(
                 component,
-                "What feature do you want to be described?",
-                "Feature Description",
+                (Login.user_type == 'A') ? "What feature do you want to be delete?" : "What feature do you want to be described?",
+                (Login.user_type == 'A') ? "Delete Feature" : "Feature Description",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
@@ -149,7 +150,13 @@ public class Profile extends JFrame {
         );
 
         if (selectedOption != JOptionPane.CLOSED_OPTION) {
-            JOptionPane.showMessageDialog(component, features.get(selectedOption).getDescription());
+            if(Login.user_type == 'A') {
+                Query query = new Query();
+                query.DeletePlayerFeature(features.get(selectedOption).getName(), idPlayer);
+            }
+            else {
+                JOptionPane.showMessageDialog(component, features.get(selectedOption).getDescription());
+            }
         }
     }
 }

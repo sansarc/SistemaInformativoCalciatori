@@ -78,7 +78,9 @@ public class Login extends JFrame {
 
     public static void main(String[] args)
     {
-        new Login();
+        //new Login();
+        Query query = new Query();
+        query.test1();
     }
 }
 

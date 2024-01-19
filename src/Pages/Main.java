@@ -91,7 +91,19 @@ public class Main extends JFrame {
         for(var f : features) {
             featureComboBox.addItem(f);
         }
+        if(Login.user_type == 'A') editProfileButton.setText("Edit Users");
         InitFilter();
+        editProfileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(Login.user_type == 'A') {
+                    new EditUser();
+                }
+                /*else  {
+                    new Profile();
+                }*/
+            }
+        });
         goalsComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
