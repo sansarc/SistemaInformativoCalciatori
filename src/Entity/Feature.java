@@ -13,4 +13,10 @@ public class Feature {
     }
     public String getDescription() {return description;}
     public char getType() {return type;}
+    public Feature() {}
+    public Feature(String name_,String description_,char type_) {
+        name = name_;
+        description = description_;
+        type = type_;
+    }
 }

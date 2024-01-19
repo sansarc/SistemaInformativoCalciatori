@@ -584,6 +584,23 @@ public class Query {
             DBconnection.disconnect(connection);
         }
     }
+
+    public void DeleteFromId(String tableName, String idName, String idValue){
+        String query = "DELETE FROM " + tableName + " WHERE " + idName + " = ?";
+        Connection connection = DBconnection.connect();
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, idValue);
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+        }
+    }
+
     //Queries on Features
     public List<String> selectAllFeatures() {
         List<String> features = new ArrayList<String>();
@@ -603,4 +620,70 @@ public class Query {
             return features;
         }
     }
+    //Queries on feature
+    public boolean updateFeature(Feature featureRequest) {
+        boolean ok_ = false;
+        Connection connection = DBconnection.connect();
+        String query = "UPDATE FEATURES SET DESCRIPTION = ?, TYPE_FEATURE = ? WHERE FEATURE_NAME = ? RETURNING FEATURE_NAME";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, featureRequest.getDescription());
+            statement.setString(2, Character.toString(featureRequest.getType()));
+            statement.setString(3, featureRequest.getName());
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                ok_ = true;
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return ok_;
+        }
+    }
+    public boolean insertFeature(Feature featureRequest) {
+        boolean ok_ = false;
+        Connection connection = DBconnection.connect();
+        String query = "INSERT INTO FEATURES(FEATURE_NAME, DESCRIPTION, TYPE_FEATURE) VALUES (?,?,?) RETURNING FEATURE_NAME";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, featureRequest.getName());
+            statement.setString(2, featureRequest.getDescription());
+            statement.setString(3, Character.toString(featureRequest.getType()));
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                ok_ = true;
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return ok_;
+        }
+    }
+    public Feature selectFeature(String feature_name) {
+        Feature featureResponse = null;
+        Connection connection = DBconnection.connect();
+        String query = "SELECT FEATURE_NAME, DESCRIPTION, TYPE_FEATURE FROM FEATURES WHERE FEATURE_NAME = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, feature_name);
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                featureResponse = new Feature(rs.getString(1),rs.getString(2),rs.getString(3).charAt(0));
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return featureResponse;
+        }
+    }
+
 }

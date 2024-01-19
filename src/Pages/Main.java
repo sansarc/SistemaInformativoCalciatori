@@ -284,7 +284,7 @@ public class Main extends JFrame {
         addEditFeaturesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //
+                new AddOrEditFeature((featureComboBox.getSelectedIndex() < 1) ? null : query.selectFeature(featureComboBox.getSelectedItem().toString()));
             }
         });
         resultsTable.addMouseListener(new MouseAdapter() {
