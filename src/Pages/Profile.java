@@ -40,7 +40,7 @@ public class Profile extends JFrame {
         imageLabel.setText("");
         playerNameLabel.setText("");
         Query query = new Query();
-        player = query.GetPlayerProfileFromId(id);
+        player = query.getPlayerProfileFromId(id);
         playerFeature = query.queryPlayerFeature(id, (Player) player);
         adminPanel.setVisible(Login.user_type == 'A');
         setTitle(player.getName() + " " + player.getLastName());
@@ -98,7 +98,7 @@ public class Profile extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int choice = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    /*boolean r =*/ query.DeleteFromId("PLAYER", "idplayer", player.getId());
+                    /*boolean r =*/ query.deleteFromId("PLAYER", "idplayer", player.getId());
                     /*if(r) {
                         JOptionPane.showMessageDialog(null, "Calciatore eliminato", "Invalid Search", JOptionPane.WARNING_MESSAGE);
                         dispose();
@@ -152,7 +152,7 @@ public class Profile extends JFrame {
         if (selectedOption != JOptionPane.CLOSED_OPTION) {
             if(Login.user_type == 'A') {
                 Query query = new Query();
-                query.DeletePlayerFeature(features.get(selectedOption).getName(), idPlayer);
+                query.deletePlayerFeature(features.get(selectedOption).getName(), idPlayer);
             }
             else {
                 JOptionPane.showMessageDialog(component, features.get(selectedOption).getDescription());

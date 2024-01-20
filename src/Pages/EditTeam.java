@@ -28,7 +28,7 @@ public class EditTeam extends JFrame {
         setSize(850, 500);
 
         Query query = new Query();
-        List<String> nations = query.SelectAllNationsForTeams();
+        List<String> nations = query.selectAllNationsForTeams();
         List<String> levels = new ArrayList<String>();
         List<Team> teams = new ArrayList<Team>();
         for (var n : nations) {
@@ -88,7 +88,7 @@ public class EditTeam extends JFrame {
                         break;
                     }
                 }
-                /*var r = */query.DeleteFromId("TEAM", "idteam", team.getId());
+                /*var r = */query.deleteFromId("TEAM", "idteam", team.getId());
                 /*if(r) {
                     JOptionPane.showMessageDialog(null, "Team eliminato", "Invalid Search", JOptionPane.WARNING_MESSAGE);
                     dispose();

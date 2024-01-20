@@ -8,14 +8,14 @@ import Entity.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class editUserPassword extends JFrame {
+public class EditUserPassword extends JFrame {
     private JPasswordField oldPasswordField;
     private JPasswordField newPasswordField;
     private JPasswordField newPasswordField2;
     private JButton changeButton;
     private JPanel panel;
 
-    public editUserPassword(User user) {
+    public EditUserPassword(User user) {
         setContentPane(panel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -33,7 +33,7 @@ public class editUserPassword extends JFrame {
                     //new password non combaciano
                 }
                 else {
-                    var ret = query.ChangePassword(user.getEmail(), oldPasswordField.getText(), newPasswordField.getText());
+                    var ret = query.changePassword(user.getEmail(), oldPasswordField.getText(), newPasswordField.getText());
                     if(ret) {
                         //ok!
                     }

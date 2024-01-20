@@ -184,11 +184,11 @@ public class AddOrEditPlayer extends JFrame {
                 var query = new Query();
                 int playerId = -1;
                 if(!isEdit) {
-                    playerId = query.InsertPlayer(playerRequest);
+                    playerId = query.insertPlayer(playerRequest);
                 }
                 else {
                     playerRequest.setId(player.getId());
-                    playerId = query.UpldatePlayer(playerRequest);
+                    playerId = query.updatePlayer(playerRequest);
                 }
                 if(playerId == -1) {
                     JOptionPane.showMessageDialog(null, "Errore, non è stato possibile inserire il calciatore!", "Errore", JOptionPane.ERROR_MESSAGE);

@@ -23,7 +23,7 @@ public class EditUser extends JFrame {
         setSize(850, 500);
 
         Query query = new Query();
-        List<User> users = query.SelectUser("","",true);
+        List<User> users = query.selectUser("","",true);
         emailBox.addItem("");
         for (var u : users) {
             emailBox.addItem(u.getEmail());
@@ -52,7 +52,7 @@ public class EditUser extends JFrame {
         deleteUserButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                query.DeleteFromId("SIC_USER", "EMAIL", emailBox.getSelectedItem().toString());
+                query.deleteFromId("SIC_USER", "EMAIL", emailBox.getSelectedItem().toString());
             }
         });
     }

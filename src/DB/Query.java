@@ -18,7 +18,7 @@ public class Query {
     public Query(JTable resultsTable) {
         this.resultsTable = resultsTable;
     }
-    public boolean ChangePassword(String email, String oldPwd, String newPwd) {
+    public boolean changePassword(String email, String oldPwd, String newPwd) {
         int ret = -1;
         Connection connection = DBconnection.connect();
         String query = "SELECT CHANGE_USER_PASSWORD(?,?,?)";
@@ -89,19 +89,19 @@ public class Query {
 
         return ids;
     }
-    public int InsertPlayer(Player playerRequest) {
+    public int insertPlayer(Player playerRequest) {
         var resp = queryPlayers((Player_Profile)playerRequest, null, false, false, null, '\0','\0','\0','\0',-1,null,false);
         if (!resp.isEmpty()) {
             int choice = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
             if (choice == JOptionPane.YES_OPTION)
-                return InsertPlayer_query(playerRequest);
+                return insertPlayer_query(playerRequest);
         }
         else {
-            return InsertPlayer_query(playerRequest);
+            return insertPlayer_query(playerRequest);
         }
         return -1;
     }
-    public int UpldatePlayer(Player playerRequest) {
+    public int updatePlayer(Player playerRequest) {
         int idPlayer = -1;
         Connection connection = DBconnection.connect();
         String query = "UPDATE PLAYER SET Player_Name = ?,Lastname = ?,birthdate = ?,foot = ?,positions = ? WHERE idPlayer = ? RETURNING IDPLAYER";
@@ -132,7 +132,7 @@ public class Query {
             return idPlayer;
         }
     }
-    private int InsertPlayer_query(Player playerRequest) {
+    private int insertPlayer_query(Player playerRequest) {
         int idPlayer = -1;
         Connection connection = DBconnection.connect();
         String query = "INSERT INTO PLAYER(player_name, lastname, birthdate, foot, positions) VALUES(?,?,?,?,?) RETURNING IDPLAYER";
@@ -156,7 +156,7 @@ public class Query {
             return idPlayer;
         }
     }
-    public Player_Profile GetPlayerProfileFromId(int id) {
+    public Player_Profile getPlayerProfileFromId(int id) {
         Connection connection = DBconnection.connect();
         String query = "SELECT * FROM PLAYER_PROFILE WHERE IDPlayer = ?";
         var player = new Player_Profile();
@@ -236,15 +236,15 @@ public class Query {
         return playerFeature;
     }
     //Query on User
-    public char Login(String username, String password) {
-        var usrs = SelectUser(username, password, false);
+    public char login(String username, String password) {
+        var usrs = selectUser(username, password, false);
         if (usrs.isEmpty())
             return '1';
         else
             return usrs.get(0).getType();
     }
-    public boolean CreateUser(String username, String password) {
-        var respSelect = this.SelectUser(username, "",false);
+    public boolean createUser(String username, String password) {
+        var respSelect = this.selectUser(username, "",false);
         if (!respSelect.isEmpty()) {
             return false;
         }
@@ -257,14 +257,14 @@ public class Query {
             System.out.println(statement);
             statement.executeUpdate();
             DBconnection.disconnect(connection);
-            respSelect = this.SelectUser(username, password, false);
+            respSelect = this.selectUser(username, password, false);
             ret = !respSelect.isEmpty();
         } catch (SQLException se) {
             DBconnection.disconnect(connection);
         }
         return ret;
     }
-    public List<User> SelectUser(String username, String password, boolean onlySimpleUser) {
+    public List<User> selectUser(String username, String password, boolean onlySimpleUser) {
         List<User> usrs = new ArrayList<User>();
         Connection connection = DBconnection.connect();
         String query = "SELECT email, type_user FROM SIC_User";
@@ -303,7 +303,7 @@ public class Query {
         return usrs;
     }
     //Queries on Team
-    public List<String> SelectAllNationsForTeams() {
+    public List<String> selectAllNationsForTeams() {
         List<String> nations = new ArrayList<String>();
         nations.add("");
         Connection connection = DBconnection.connect();
@@ -322,7 +322,7 @@ public class Query {
             return nations;
         }
     }
-    public List<String> SelectLevelsFromNation(String nation) {
+    public List<String> selectLevelsFromNation(String nation) {
         List<String> levels = new ArrayList<String>();
         levels.add("");
         Connection connection = DBconnection.connect();
@@ -340,7 +340,7 @@ public class Query {
             return levels;
         }
     }
-    public List<Team> TeamsFromNationAndLevel(String nation, int level) {
+    public List<Team> teamsFromNationAndLevel(String nation, int level) {
         List<Team> teams = new ArrayList<Team>();
         teams.add(new Team("", nation, level, -1));
         Connection connection = DBconnection.connect();
@@ -493,16 +493,16 @@ public class Query {
         }
     }
     public int insert_team(Team teamRequest) {
-        var resp = SearchTeam(teamRequest);
+        var resp = searchTeam(teamRequest);
         if (resp != -1) {
             int scelta = JOptionPane.showConfirmDialog(null, "Esiste già una squadra chiamata " + teamRequest.getName() + " nella nazione indicata!", "Calciatore già presente", JOptionPane.ERROR_MESSAGE);
         }
         else {
-            return InsertTeam_query(teamRequest);
+            return insertTeam_query(teamRequest);
         }
         return -1;
     }
-    private int SearchTeam(Team teamRequest) {
+    private int searchTeam(Team teamRequest) {
         int idTeam = -1;
         Connection connection = DBconnection.connect();
         String query = "SELECT idTeam FROM TEAM WHERE team_name = ? and nation= ?";
@@ -523,7 +523,7 @@ public class Query {
             return idTeam;
         }
     }
-    private int InsertTeam_query(Team teamRequest) {
+    private int insertTeam_query(Team teamRequest) {
         int idTeam = -1;
         Connection connection = DBconnection.connect();
         String query = "INSERT INTO TEAM(team_name, nation, level) VALUES(?,?,?) RETURNING IDTEAM";
@@ -623,52 +623,58 @@ public class Query {
             return awardsResponse;
         }
     }
-    public void DeleteFromId(String tableName, String idName, int idValue){
+    public boolean deleteFromId(String tableName, String idName, int idValue){
+        boolean rs = false;
         String query = "DELETE FROM " + tableName + " WHERE " + idName + " = ?";
         Connection connection = DBconnection.connect();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idValue);
             System.out.println(statement);
-            var rs = statement.executeQuery();
+            rs = statement.execute();
         } catch (SQLException se) {
             se.printStackTrace();
         } catch(Exception ex) {
             ex.printStackTrace();
         }finally {
             DBconnection.disconnect(connection);
+            return rs;
         }
     }
-    public void DeletePlayerFeature(String idFeature, int idPlayer){
+    public boolean deletePlayerFeature(String idFeature, int idPlayer){
+        boolean rs = false;
         String query = "DELETE FROM PLAYER_FEATURE WHERE idPlayer = ? and idFeature = ?";
         Connection connection = DBconnection.connect();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idPlayer);
             statement.setString(2, idFeature);
             System.out.println(statement);
-            var rs = statement.executeQuery();
+            rs = statement.execute();
         } catch (SQLException se) {
             se.printStackTrace();
         } catch(Exception ex) {
             ex.printStackTrace();
         }finally {
             DBconnection.disconnect(connection);
+            return rs;
         }
     }
 
 
-    public void DeleteFromId(String tableName, String idName, String idValue){
+    public boolean deleteFromId(String tableName, String idName, String idValue){
+        boolean rs = false;
         String query = "DELETE FROM " + tableName + " WHERE " + idName + " = ?";
         Connection connection = DBconnection.connect();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, idValue);
             System.out.println(statement);
-            var rs = statement.executeQuery();
+            rs = statement.execute();
         } catch (SQLException se) {
             se.printStackTrace();
         } catch(Exception ex) {
             ex.printStackTrace();
         }finally {
             DBconnection.disconnect(connection);
+            return rs;
         }
     }
 

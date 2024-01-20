@@ -79,7 +79,7 @@ public class Main extends JFrame {
             apparencesComboBox.addItem(i);
         }
         query = new Query(resultsTable);
-        List<String> nations = query.SelectAllNationsForTeams();
+        List<String> nations = query.selectAllNationsForTeams();
         List<String> levels = new ArrayList<String>();
         List<Team> teams = new ArrayList<Team>();
         for (var n : nations) {

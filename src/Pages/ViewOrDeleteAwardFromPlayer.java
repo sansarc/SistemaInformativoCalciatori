@@ -30,7 +30,7 @@ public class ViewOrDeleteAwardFromPlayer extends JFrame {
                 int col = awardsTable.columnAtPoint(e.getPoint());
                 JOptionPane.showMessageDialog(null, "selezionato " + awards.get(row).getName(), "Invalid Search", JOptionPane.WARNING_MESSAGE);
                 if(Login.user_type == 'A') {
-                    query.DeleteFromId("AWARD", "idaward", awards.get(row).getId());
+                    query.deleteFromId("AWARD", "idaward", awards.get(row).getId());
                 }
             }
         });

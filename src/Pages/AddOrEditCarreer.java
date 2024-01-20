@@ -44,7 +44,7 @@ public class AddOrEditCarreer extends JFrame {
 
         ids = new ArrayList<Integer>();
         Query query = new Query(carreerTable);
-        List<String> nations = query.SelectAllNationsForTeams();
+        List<String> nations = query.selectAllNationsForTeams();
         List<String> levels = new ArrayList<String>();
         List<Team> teams = new ArrayList<Team>();
         for (var n : nations) {
@@ -135,7 +135,7 @@ public class AddOrEditCarreer extends JFrame {
                 int row = carreerTable.rowAtPoint(e.getPoint());
                 JOptionPane.showMessageDialog(null, "selezionato " + ids.get(row), "Invalid Search", JOptionPane.WARNING_MESSAGE);
                 if(Login.user_type == 'A') {
-                    query.DeleteFromId("PLAYER_TEAM", "idtransfer", ids.get(row));
+                    query.deleteFromId("PLAYER_TEAM", "idtransfer", ids.get(row));
                 }
             }
         });

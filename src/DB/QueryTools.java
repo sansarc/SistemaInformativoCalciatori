@@ -228,7 +228,7 @@ public class QueryTools {
                 if(selectLevelBox.getItemCount() > 0)
                     selectLevelBox.removeAllItems();
                 levels.clear();
-                levels.addAll(query.SelectLevelsFromNation(selectNationBox.getSelectedItem().toString()));
+                levels.addAll(query.selectLevelsFromNation(selectNationBox.getSelectedItem().toString()));
                 for (var l : levels) {
                     selectLevelBox.addItem(l);
                 }
@@ -250,7 +250,7 @@ public class QueryTools {
                 if (selectTeamBox.getItemCount() > 0)
                     selectTeamBox.removeAllItems();
                 teams.clear();
-                teams.addAll(query.TeamsFromNationAndLevel(selectNationBox.getSelectedItem().toString(), Integer.parseInt(selectLevelBox.getSelectedItem().toString())));
+                teams.addAll(query.teamsFromNationAndLevel(selectNationBox.getSelectedItem().toString(), Integer.parseInt(selectLevelBox.getSelectedItem().toString())));
                 for (var t : teams) {
                     selectTeamBox.addItem(t.getName());
                 }

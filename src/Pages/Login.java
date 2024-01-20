@@ -30,7 +30,7 @@ public class Login extends JFrame {
                 String pwd = password.getText();
                 if (blankCredentials(u_name, pwd)) return;
                 query = new Query();
-                var ut = query.Login(u_name, pwd);
+                var ut = query.login(u_name, pwd);
                 if (ut == '0')
                 {
                     JOptionPane.showMessageDialog(null, "Internal Error!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -54,7 +54,7 @@ public class Login extends JFrame {
                 String pwd = password.getText();
                 if (blankCredentials(u_name, pwd)) return;
                 query = new Query();
-                var resultCreateUser = query.CreateUser(u_name, pwd);
+                var resultCreateUser = query.createUser(u_name, pwd);
                 if(resultCreateUser)
                     JOptionPane.showMessageDialog(null, "User created successfully.", "Sign up", JOptionPane.INFORMATION_MESSAGE);
                 else

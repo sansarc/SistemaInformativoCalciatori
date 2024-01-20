@@ -29,7 +29,7 @@ public class AddAwards extends JFrame {
         setVisible(true);
         setSize(850, 500);
         Query query = new Query();
-        List<String> nations = query.SelectAllNationsForTeams();
+        List<String> nations = query.selectAllNationsForTeams();
         List<String> levels = new ArrayList<String>();
         List<Team> teams = new ArrayList<Team>();
         List<Player> players = new ArrayList<Player>();
