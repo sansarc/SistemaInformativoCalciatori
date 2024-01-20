@@ -64,7 +64,7 @@ public class EditTeam extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 var new_level = Integer.parseInt(levelSpinner.getValue().toString());
                 if(new_level <0 ) {
-                    JOptionPane.showMessageDialog(null, "Livello non può essere < 0", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "The level cannot be a negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
                 Team team = new Team();
@@ -88,16 +88,10 @@ public class EditTeam extends JFrame {
                         break;
                     }
                 }
-                /*var r = */query.deleteFromId("TEAM", "idteam", team.getId());
-                /*if(r) {
-                    JOptionPane.showMessageDialog(null, "Team eliminato", "Invalid Search", JOptionPane.WARNING_MESSAGE);
-                    dispose();
+                int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the selected team?", "Delete team", JOptionPane.YES_NO_OPTION);
+                if (choice == JOptionPane.YES_OPTION) {
+                    query.deleteFromId("TEAM", "idteam", team.getId());
                 }
-                else {
-                    JOptionPane.showMessageDialog(null, "Team non eliminato", "Invalid Search", JOptionPane.WARNING_MESSAGE);
-                    dispose();
-                }*/
-
             }
         });
     }

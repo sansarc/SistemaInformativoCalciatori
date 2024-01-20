@@ -15,6 +15,7 @@ public class Login extends JFrame {
     private JButton loginButton;
     private Query query;
     static char user_type;
+    static String user_email;
 
     public Login() {
         setContentPane(panel);

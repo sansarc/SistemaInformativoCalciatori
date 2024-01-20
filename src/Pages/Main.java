@@ -99,9 +99,9 @@ public class Main extends JFrame {
                 if(Login.user_type == 'A') {
                     new EditUser();
                 }
-                /*else  {
-                    new Profile();
-                }*/
+                else if(Login.user_type == 'P')  {
+                    new Profile( Integer.parseInt(username.substring(0, username.indexOf("@")-1)), true );
+                }
             }
         });
         goalsComboBox.addActionListener(new ActionListener() {
@@ -296,7 +296,13 @@ public class Main extends JFrame {
         addEditFeaturesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new AddOrEditFeature((featureComboBox.getSelectedIndex() < 1) ? null : query.selectFeature(featureComboBox.getSelectedItem().toString()));
+                if(featureComboBox.getSelectedIndex() > 0) {
+                    int choice = JOptionPane.showConfirmDialog(null, "Si ?", "Do you want to modify the  \"" + featureComboBox.getSelectedItem().toString() + "\" features?", JOptionPane.YES_NO_OPTION);
+                    if (choice == JOptionPane.YES_OPTION) {
+                        new AddOrEditFeature(query.selectFeature(featureComboBox.getSelectedItem().toString()));
+                    }
+                }
+                new AddOrEditFeature(null);
             }
         });
         resultsTable.addMouseListener(new MouseAdapter() {
@@ -304,7 +310,7 @@ public class Main extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int row = resultsTable.rowAtPoint(e.getPoint());
                 //int col = resultsTable.columnAtPoint(e.getPoint());
-                new Profile(ids.get(row));
+                new Profile(ids.get(row), (Login.user_type == 'A' || (Login.user_type == 'P' && (Integer.parseInt(username.substring(0, username.indexOf("@")-1)) == ids.get(row))) ) );
             }
         });
         clearButton.addActionListener(new ActionListener() {

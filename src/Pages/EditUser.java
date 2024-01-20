@@ -46,13 +46,19 @@ public class EditUser extends JFrame {
         editUserTypeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                query.updateUserType(emailBox.getSelectedItem().toString());
+                int choice = JOptionPane.showConfirmDialog(null, "Do yo want to make the " +  emailBox.getSelectedItem().toString() + " user administrator?", "Update user", JOptionPane.YES_NO_OPTION);
+                if (choice == JOptionPane.YES_OPTION) {
+                    query.updateUserType(emailBox.getSelectedItem().toString());
+                }
             }
         });
         deleteUserButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                query.deleteFromId("SIC_USER", "EMAIL", emailBox.getSelectedItem().toString());
+                int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the selected user (" + emailBox.getSelectedItem().toString()  + ")?", "Delete user", JOptionPane.YES_NO_OPTION);
+                if (choice == JOptionPane.YES_OPTION) {
+                    query.deleteFromId("SIC_USER", "EMAIL", emailBox.getSelectedItem().toString());
+                }
             }
         });
     }

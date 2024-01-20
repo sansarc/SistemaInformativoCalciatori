@@ -58,7 +58,10 @@ public class AddOrEditFeature extends JFrame {
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                query.deleteFromId("FEATURE", "FEATURE_NAME", feature.getName());
+                int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the selected feature?", "Delete feature", JOptionPane.YES_NO_OPTION);
+                if (choice == JOptionPane.YES_OPTION) {
+                    query.deleteFromId("FEATURE", "FEATURE_NAME", feature.getName());
+                }
             }
         });
     }

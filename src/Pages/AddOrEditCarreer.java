@@ -80,11 +80,11 @@ public class AddOrEditCarreer extends JFrame {
                         && ! fromDate.getText().isBlank())
                 {
                     if(Integer.parseInt(scorespinner.getValue().toString()) < 0 || Integer.parseInt(concededspinner.getValue().toString()) < 0 || Integer.parseInt(apparencesSpinner.getValue().toString()) < 0 ) {
-                        JOptionPane.showMessageDialog(null, "Errore, i goal e le presenze non possono essere negativi!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error: goals and apparences cannot be negative!", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     else if( (Integer.parseInt(scorespinner.getValue().toString()) > 0 || Integer.parseInt(concededspinner.getValue().toString()) > 0) && Integer.parseInt(apparencesSpinner.getValue().toString()) == 0 ) {
-                        JOptionPane.showMessageDialog(null, "Errore, se le presenze sono 0 non possono esserci goal subiti o segnati!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error: if the apparences is 0 there can be no goals conceded or scored!", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     Date from_date = new Date();
@@ -117,15 +117,15 @@ public class AddOrEditCarreer extends JFrame {
                     int transferId = -1;
                     transferId = query.insert_player_team(player.getId(), idTeam, from_date, to_date, Integer.parseInt(scorespinner.getValue().toString()), Integer.parseInt(concededspinner.getValue().toString()), goalkeeperPanel.isVisible(), Integer.parseInt(apparencesSpinner.getValue().toString()));
                     if(transferId == -1) {
-                        JOptionPane.showMessageDialog(null, "Errore, non è stato possibile inserire il record!", "Errore", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error: the record could not be inserted!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                     else {
-                        JOptionPane.showMessageDialog(null, "Record inserito con successo!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Record inserted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                         ids = query.select_player_carreer(player.getId(), goalkeeperPanel.isVisible());
                     }
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "Errore, i campi contrassegnati con \"*\" sono obbligatori!", "Errore", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error: fields marked with \"*\" are mandatory", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -133,9 +133,11 @@ public class AddOrEditCarreer extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int row = carreerTable.rowAtPoint(e.getPoint());
-                JOptionPane.showMessageDialog(null, "selezionato " + ids.get(row), "Invalid Search", JOptionPane.WARNING_MESSAGE);
                 if(Login.user_type == 'A') {
-                    query.deleteFromId("PLAYER_TEAM", "idtransfer", ids.get(row));
+                    int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the selected record?", "Delete row", JOptionPane.YES_NO_OPTION);
+                    if (choice == JOptionPane.YES_OPTION) {
+                        query.deleteFromId("PLAYER_TEAM", "idtransfer", ids.get(row));
+                    }
                 }
             }
         });

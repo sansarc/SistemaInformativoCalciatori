@@ -80,7 +80,7 @@ public class AddAwards extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(dateWinnerField.getText().toString().isBlank() || nameField.getText().toString().isBlank()) {
-                    JOptionPane.showMessageDialog(null, "I campi contrassegnati con \"*\" sono obbligatori!", "Errore!", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error: fields marked with \"*\" are mandatory", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 SimpleDateFormat varDate = new SimpleDateFormat("MM/dd/yyyy");
@@ -111,10 +111,10 @@ public class AddAwards extends JFrame {
                 awardRequest.setIdTeam(idTeam);
                 int awardId = query.insertAward(awardRequest);
                 if(awardId == -1) {
-                    JOptionPane.showMessageDialog(null, "NOOOOO!", "Errore!", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error: insertion failed!", "Error!", JOptionPane.ERROR_MESSAGE);
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "OKKKK!", "Errore!", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Insertion successfull!", "Success!", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });

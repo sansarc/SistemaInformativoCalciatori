@@ -27,18 +27,18 @@ public class EditUserPassword extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(oldPasswordField.getText().isBlank() || newPasswordField.getText().isBlank() || newPasswordField2.getText().isBlank()) {
-                    //tutti i campi sono obbligatori
+                    JOptionPane.showMessageDialog(null, "Error: all fields are required!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else if( ! newPasswordField.getText().equals(newPasswordField2.getText()) ) {
-                    //new password non combaciano
+                    JOptionPane.showMessageDialog(null, "Error: the new passwords do not match!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else {
                     var ret = query.changePassword(user.getEmail(), oldPasswordField.getText(), newPasswordField.getText());
                     if(ret) {
-                        //ok!
+                        JOptionPane.showMessageDialog(null, "Password updated successfully!", "Password Changed", JOptionPane.ERROR_MESSAGE);
                     }
                     else {
-                        //password errata!
+                        JOptionPane.showMessageDialog(null, "Error: the old password is incorrect!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }

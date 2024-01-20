@@ -2,7 +2,6 @@ package Pages;
 
 import DB.Query;
 import Entity.Player;
-import Entity.Player_Profile;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -21,6 +20,7 @@ public class AddOrEditPlayer extends JFrame {
     private JTextField playerBirthDate_s;
     private JPanel panel;
     private JButton insertButton;
+    private JTextField imagePathField;
 
     public AddOrEditPlayer(Player player) {
         setContentPane(panel);
@@ -35,7 +35,7 @@ public class AddOrEditPlayer extends JFrame {
             setTitle("SIC - Add New Player");
         }
         else  {
-            setTitle("SIC - Edit " + player.getName() + player.getLastName());
+            setTitle("SIC - Edit " + player.getName() + " " + player.getLastName());
             insertButton.setText("Edit");
             playerName.setText(player.getName());
             playerLastName.setText(player.getLastName());
@@ -129,7 +129,7 @@ public class AddOrEditPlayer extends JFrame {
                 char foot = '\0';
                 Date birthdate = new Date();
                 if(playerName.getText().isBlank() || playerLastName.getText().isBlank() || (!forwardCheckBox.isSelected() && !midfielderCheckBox.isSelected() && !defenderCheckBox.isSelected() && !goalkeeperCheckBox.isSelected() ) || playerBirthDate_s.getText().isBlank() || footComboBox.getSelectedItem().equals('\0') ) {
-                    JOptionPane.showMessageDialog(null, "Errore, tutti i campi sono obbligatori!", "Errore", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error: fields marked with \"*\" are mandatory!", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 else
@@ -141,7 +141,7 @@ public class AddOrEditPlayer extends JFrame {
                     }
                     catch (Exception exception)
                     {
-                        JOptionPane.showMessageDialog(null, "Errore, la data non è espressa in un formato corretto!", "Errore", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error: the date must be expressed in the required format!", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
@@ -180,21 +180,30 @@ public class AddOrEditPlayer extends JFrame {
                         }
                     }
                 }
+                String playerImg = "";
+                try {
+                    if(!imagePathField.getText().isBlank()) {
+                        playerImg = DB.QueryTools.imageToBase64(imagePathField.getText());
+                    }
+                }
+                catch(Exception ex) {
+                    JOptionPane.showMessageDialog(null, "error, path: \" + imagePathField.getText() + \" not valid!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
                 Player playerRequest = new Player(playerName.getText(), playerLastName.getText(), positions, birthdate, null, foot, -1);
                 var query = new Query();
                 int playerId = -1;
                 if(!isEdit) {
-                    playerId = query.insertPlayer(playerRequest);
+                    playerId = query.insertPlayer(playerRequest, playerImg);
                 }
                 else {
                     playerRequest.setId(player.getId());
                     playerId = query.updatePlayer(playerRequest);
                 }
                 if(playerId == -1) {
-                    JOptionPane.showMessageDialog(null, "Errore, non è stato possibile inserire il calciatore!", "Errore", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error: it was not possible to insert the player!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "Calciatore inserito con successo!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Player insert with success!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     Player player_i = new Player();
                     player_i.setId(playerId);
                     player_i.setName(playerName.getText());

@@ -28,9 +28,11 @@ public class ViewOrDeleteAwardFromPlayer extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int row = awardsTable.rowAtPoint(e.getPoint());
                 int col = awardsTable.columnAtPoint(e.getPoint());
-                JOptionPane.showMessageDialog(null, "selezionato " + awards.get(row).getName(), "Invalid Search", JOptionPane.WARNING_MESSAGE);
                 if(Login.user_type == 'A') {
-                    query.deleteFromId("AWARD", "idaward", awards.get(row).getId());
+                    int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the selected award?", "Delete award", JOptionPane.YES_NO_OPTION);
+                    if (choice == JOptionPane.YES_OPTION) {
+                        query.deleteFromId("AWARD", "idaward", awards.get(row).getId());
+                    }
                 }
             }
         });

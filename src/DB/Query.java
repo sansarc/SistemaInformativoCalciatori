@@ -89,17 +89,17 @@ public class Query {
 
         return ids;
     }
-    public int insertPlayer(Player playerRequest) {
-        var resp = queryPlayers((Player_Profile)playerRequest, null, false, false, null, '\0','\0','\0','\0',-1,null,false);
+    public int insertPlayer(Player playerRequest, String img) {
+        /*var resp = queryPlayers((Player_Profile)playerRequest, null, false, false, null, '\0','\0','\0','\0',-1,null,false);
         if (!resp.isEmpty()) {
             int choice = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
             if (choice == JOptionPane.YES_OPTION)
-                return insertPlayer_query(playerRequest);
+                return insertPlayer_query(playerRequest,img);
         }
-        else {
-            return insertPlayer_query(playerRequest);
-        }
-        return -1;
+        else {*/
+            return insertPlayer_query(playerRequest,img);
+        //}
+        //return -1;
     }
     public int updatePlayer(Player playerRequest) {
         int idPlayer = -1;
@@ -132,16 +132,23 @@ public class Query {
             return idPlayer;
         }
     }
-    private int insertPlayer_query(Player playerRequest) {
+    private int insertPlayer_query(Player playerRequest, String img) {
         int idPlayer = -1;
         Connection connection = DBconnection.connect();
-        String query = "INSERT INTO PLAYER(player_name, lastname, birthdate, foot, positions) VALUES(?,?,?,?,?) RETURNING IDPLAYER";
+        String query = "";
+        if(img.isBlank()) {
+            query = "INSERT INTO PLAYER(player_name, lastname, birthdate, foot, positions) VALUES(?,?,?,?,?) RETURNING IDPLAYER";
+        }
+        else {
+            query = "INSERT INTO PLAYER(player_name, lastname, birthdate, foot, positions,image_data ) VALUES(?,?,?,?,?,?) RETURNING IDPLAYER";
+        }
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, playerRequest.getName());
             statement.setString(2, playerRequest.getLastName());
             statement.setDate(3, new java.sql.Date(playerRequest.getBirthDate().getTime()));
             statement.setString(4, Character.toString(playerRequest.getFoot()));
             statement.setString(5, playerRequest.getPosition());
+            if(!img.isBlank()) statement.setBytes(6, img.getBytes());
             System.out.println(statement);
             var rs = statement.executeQuery();
             if (rs.next()) {
@@ -326,7 +333,7 @@ public class Query {
         List<String> levels = new ArrayList<String>();
         levels.add("");
         Connection connection = DBconnection.connect();
-        String query = "SELECT DISTINCT LEVEL FROM TEAMS WHERE nation = ?";
+        String query = "SELECT DISTINCT LEVEL FROM TEAM WHERE nation = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, nation);
             var rs = statement.executeQuery();
@@ -495,7 +502,7 @@ public class Query {
     public int insert_team(Team teamRequest) {
         var resp = searchTeam(teamRequest);
         if (resp != -1) {
-            int scelta = JOptionPane.showConfirmDialog(null, "Esiste già una squadra chiamata " + teamRequest.getName() + " nella nazione indicata!", "Calciatore già presente", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error: a team called " + teamRequest.getName() + " already exist in the selected nation!", "Existing team", JOptionPane.ERROR_MESSAGE);
         }
         else {
             return insertTeam_query(teamRequest);
@@ -535,7 +542,7 @@ public class Query {
             var rs = statement.executeQuery();
             if (rs.next()) {
                 idTeam = rs.getInt(1);
-                int scelta = JOptionPane.showConfirmDialog(null, "Team inserito con successo!", "OK", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Team successfullY inserted!", "Success", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (SQLException se) {
             se.printStackTrace();

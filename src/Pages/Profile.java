@@ -30,7 +30,7 @@ public class Profile extends JFrame {
     private Player_Profile player;
     private PlayerFeature playerFeature;
 
-    public Profile(int id) {
+    public Profile(int id, boolean editable) {
         setContentPane(panel);
         setSize(500, 400);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -42,7 +42,7 @@ public class Profile extends JFrame {
         Query query = new Query();
         player = query.getPlayerProfileFromId(id);
         playerFeature = query.queryPlayerFeature(id, (Player) player);
-        adminPanel.setVisible(Login.user_type == 'A');
+        adminPanel.setVisible(editable);
         setTitle(player.getName() + " " + player.getLastName());
         try {
             imageLabel.setIcon(new ImageIcon(player.getImage()));
@@ -89,26 +89,17 @@ public class Profile extends JFrame {
             featureLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    showOptionsDialog(Profile.this, playerFeature.getFeatureList(), player.getId());
+                    showOptionsDialog(Profile.this, playerFeature.getFeatureList(), player.getId(), editable);
                 }
             });
         }
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int choice = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
+                int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the player \"" + player.getName() + " " + player.getLastName() + "\"?", "Delete player", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    /*boolean r =*/ query.deleteFromId("PLAYER", "idplayer", player.getId());
-                    /*if(r) {
-                        JOptionPane.showMessageDialog(null, "Calciatore eliminato", "Invalid Search", JOptionPane.WARNING_MESSAGE);
-                        dispose();
-                    }
-                    else {
-                        JOptionPane.showMessageDialog(null, "Calciatore non eliminato", "Invalid Search", JOptionPane.WARNING_MESSAGE);
-                        dispose();
-                    }*/
+                    query.deleteFromId("PLAYER", "idplayer", player.getId());
                 }
-
             }
         });
 
@@ -132,7 +123,7 @@ public class Profile extends JFrame {
         });
     }
 
-    private static void showOptionsDialog(JFrame component, List<Feature> features, int idPlayer) {
+    private static void showOptionsDialog(JFrame component, List<Feature> features, int idPlayer, boolean editable) {
         String[] options = new String[features.size()];
         for (int i = 0; i < features.size(); i++) {
             options[i] = features.get(i).getName();
@@ -140,8 +131,8 @@ public class Profile extends JFrame {
 
         int selectedOption = JOptionPane.showOptionDialog(
                 component,
-                (Login.user_type == 'A') ? "What feature do you want to be delete?" : "What feature do you want to be described?",
-                (Login.user_type == 'A') ? "Delete Feature" : "Feature Description",
+                (editable) ? "What feature do you want to be delete?" : "What feature do you want to be described?",
+                (editable) ? "Delete Feature" : "Feature Description",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
@@ -150,7 +141,7 @@ public class Profile extends JFrame {
         );
 
         if (selectedOption != JOptionPane.CLOSED_OPTION) {
-            if(Login.user_type == 'A') {
+            if(editable) {
                 Query query = new Query();
                 query.deletePlayerFeature(features.get(selectedOption).getName(), idPlayer);
             }

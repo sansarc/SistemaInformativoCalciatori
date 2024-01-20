@@ -7,6 +7,20 @@ import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Date;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.Iterator;
+
 public class QueryTools {
     public static String getQuerySearchPlayer(Player_Profile playerRequest, Entity.Team actualTeam, boolean freeagent, boolean retired,
                                                 List<String> positions, char goals_c, char conceded_c, char apparences_c, char age_c, String feature, int age, PreparedStatement statement) {
@@ -147,7 +161,7 @@ public class QueryTools {
                 statement.setString(++index, feature);
             }
         }
-        query += ", p.idPlayer FROM  PLAYER_PROFILE P LEFT JOIN PLAYER_CARREER PC ON PC.IDPLAYER = P.IDPLAYER LEFT JOIN TEAMS T ON T.IDTEAM = PC.IDTEAM LEFT JOIN PLAYER_FEATURE F ON F.IDPLAYER = P.IDPLAYER WHERE " + whereString;
+        query += ", p.idPlayer FROM  PLAYER_PROFILE P LEFT JOIN PLAYER_CARREER PC ON PC.IDPLAYER = P.IDPLAYER LEFT JOIN TEAM T ON T.IDTEAM = PC.IDTEAM LEFT JOIN PLAYER_FEATURE F ON F.IDPLAYER = P.IDPLAYER WHERE " + whereString;
 
         //select pc.idplayer, pc.player_name, pc.lastname from player_carreer pc join teams t on t.idteam = pc.idteam join player_profile pp on pc.idplayer = pp.idplayer join player_feature f on f.idplayer = pc.idplayer where pc.player_name LIKE 'Vittorio' AND pc.lastname LIKE 'Osimenno' and t.team_name = 'SSC NAPOLI' and t.nation = 'IT' and pc.enddate is null AND pp.goalsscored > 80 and f.idfeature = 'head shot'
 
@@ -157,52 +171,6 @@ public class QueryTools {
             return query;
         }
     }
-
-
-    /*public static String getQuery(String name, String lastname, char ageMath, String age, List<String> positions, char foot, boolean isRetired, String team) {
-        StringBuilder query = new StringBuilder("SELECT player_name, lastname, team_name, players.idPlayer FROM players LEFT JOIN player_team ON players.idplayer = player_team.idPlayer LEFT JOIN teams ON player_team.idTeam = teams.idTeam WHERE");
-        boolean conditionAND = false;
-
-        if (!name.isBlank()) {
-            query.append(" LOWER(player_name) LIKE LOWER(?)");
-            conditionAND = true;
-        }
-        if (!lastname.isBlank()) {
-            if (conditionAND) query.append(" AND");
-            query.append(" LOWER(lastname) LIKE LOWER(?)");
-            conditionAND = true;
-        }
-        if (!positions.isEmpty()) {
-            for (int i = 0; i < positions.size(); i++) {
-                if (conditionAND) query.append(" AND");
-                query.append(" positions LIKE ?");
-                conditionAND = true;
-            }
-        }
-        if (!age.isBlank()) {
-            if (conditionAND) query.append(" AND");
-            query.append(" EXTRACT(YEAR FROM AGE(CURRENT_DATE, birthdate)) ").append(ageMath).append("?");
-            conditionAND = true;
-        }
-        if (foot != '\0') {
-            if (conditionAND) query.append(" AND");
-            query.append(" foot = ?");
-            conditionAND = true;
-        }
-        if (!team.isBlank()) {
-            if (conditionAND) query.append(" AND");
-            query.append(" LOWER(teams.team_name) LIKE LOWER(?)");
-        }
-        if (isRetired) {
-            if (conditionAND) query.append(" AND");
-            query.append(" retirementDate  IS NOT NULL AND player_team.EndDate IS NOT NULL");
-        } else {
-            query.append(" AND retirementDate  IS NULL AND player_team.EndDate IS NULL");
-        }
-
-        query.append(" ORDER BY lastname;");
-        return query.toString();
-    }*/
 
     public static String updateColumnName(String columnName) {
         return switch (columnName) {
@@ -303,6 +271,26 @@ public class QueryTools {
             return false;
         }
     }
-
-
+    public static String imageToBase64(String path) {
+        String base64String = "";
+        try {
+            File inputFile = new File(path);
+            BufferedImage image = ImageIO.read(inputFile);
+            resizeImage(image, 150, 150);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ImageIO.write(image, "jpg", byteArrayOutputStream);
+            base64String = Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return base64String;
+    }
+    private static void resizeImage(BufferedImage imageToResize, int targetWidth, int targetHeight) {
+        Image resultingImage = imageToResize.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+        BufferedImage outputImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = outputImage.createGraphics();
+        g2d.drawImage(resultingImage, 0, 0, null);
+        g2d.dispose();
+        imageToResize = outputImage;
+    }
 }
