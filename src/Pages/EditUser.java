@@ -48,7 +48,13 @@ public class EditUser extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int choice = JOptionPane.showConfirmDialog(null, "Do yo want to make the " +  emailBox.getSelectedItem().toString() + " user administrator?", "Update user", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    query.updateUserType(emailBox.getSelectedItem().toString());
+                    boolean ok_ = query.updateUserType(emailBox.getSelectedItem().toString());
+                    if(ok_) {
+                        JOptionPane.showMessageDialog(null, "User type updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "error updating user type!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         });
@@ -59,6 +65,13 @@ public class EditUser extends JFrame {
                 if (choice == JOptionPane.YES_OPTION) {
                     query.deleteFromId("SIC_USER", "EMAIL", emailBox.getSelectedItem().toString());
                 }
+            }
+        });
+        editMyPasswordButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new EditUserPassword(Login.user_email);
+                dispose();
             }
         });
     }

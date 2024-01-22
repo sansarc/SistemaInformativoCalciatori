@@ -1,14 +1,11 @@
 package Pages;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import Entity.Feature;
 import DB.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeListener;
 
 public class AddOrEditFeature extends JFrame {
     private JTextField nameField;
@@ -17,13 +14,14 @@ public class AddOrEditFeature extends JFrame {
     private JButton insertButton;
     private JPanel panel;
     private JButton deleteButton;
+    private JButton returnInMainPageButton;
     private Query query;
 
     public AddOrEditFeature(Feature feature) {
         setContentPane(panel);
         setSize(500, 400);
         boolean isEdit = feature != null;
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
         String[] typeOpt = {"\0", "Offensive", "Defensive"};
@@ -32,7 +30,7 @@ public class AddOrEditFeature extends JFrame {
             setTitle("SIC - Add New Feature");
             deleteButton.setVisible(false);
         } else {
-            setTitle("SIC - Edit " + feature.getName());
+            setTitle("SIC - Edit Feature \"" + feature.getName() + "\"");
             insertButton.setText("Edit");
             nameField.setEnabled(false);
             nameField.setText(feature.getName());
@@ -40,19 +38,32 @@ public class AddOrEditFeature extends JFrame {
             typeComboBox.setSelectedIndex((feature.getType() == 'O') ? 1 : 2);
         }
         query = new Query();
+        returnInMainPageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Main();
+                dispose();
+            }
+        });
         insertButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(nameField.getText().isBlank() || descriptionPane.getText().isBlank() || typeComboBox.getSelectedIndex() < 1) {
+                    JOptionPane.showMessageDialog(null, "Error: all fields are required!", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 var featureRequest = new Feature(nameField.getText(), descriptionPane.getText(), typeComboBox.getSelectedItem().toString().charAt(0));
+                boolean _ok = false;
                 if(isEdit) {
-                    query.updateFeature(featureRequest);
+                    _ok = query.updateFeature(featureRequest);
                 }
                 else {
-                    query.insertFeature(featureRequest);
+                    _ok = query.insertFeature(featureRequest);
                 }
+                if(_ok)
+                    JOptionPane.showMessageDialog(null, "Operation completed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                else
+                    JOptionPane.showMessageDialog(null, "Error during the operation!", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         deleteButton.addActionListener(new ActionListener() {

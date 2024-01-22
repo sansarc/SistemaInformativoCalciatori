@@ -94,6 +94,7 @@ public class AddOrEditCarreer extends JFrame {
                         from_date = varDate.parse(fromDate.getText());
                     }
                     catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Error: start date is in a bad format!", "Error!", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
                         return;
                     }
@@ -104,6 +105,7 @@ public class AddOrEditCarreer extends JFrame {
                         }
                     }
                     catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Error: end date is in a bad format!", "Error!", JOptionPane.ERROR_MESSAGE);
                         ex.printStackTrace();
                         return;
                     }

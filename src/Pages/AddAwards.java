@@ -22,12 +22,15 @@ public class AddAwards extends JFrame {
     private JComboBox selectPlayerBox;
     private JButton insertButton;
     private JPanel panel;
+    public Date WinnerDate;
+
     public AddAwards() {
         setContentPane(panel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
         setSize(850, 500);
+        setTitle("SIC - Insertion of a new Award");
         Query query = new Query();
         List<String> nations = query.selectAllNationsForTeams();
         List<String> levels = new ArrayList<String>();
@@ -36,10 +39,33 @@ public class AddAwards extends JFrame {
         for (var n : nations) {
             selectNationBox.addItem(n);
         }
+        WinnerDate = new Date();
+        selectNationBox.setEnabled(false);
         selectLevelBox.setEnabled(false);
         selectTeamBox.setEnabled(false);
         insertButton.setEnabled(false);
         selectPlayerBox.setEnabled(false);
+        dateWinnerField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!dateWinnerField.getText().isBlank()) {
+                    try {
+                        SimpleDateFormat varDate = new SimpleDateFormat("MM/dd/yyyy");
+                            WinnerDate = varDate.parse(dateWinnerField.getText());
+                            selectNationBox.setEnabled(true);
+                    }
+                    catch(Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Error: bad date format!", "Error!", JOptionPane.ERROR_MESSAGE);
+                        selectNationBox.setEnabled(false);
+                    }
+                }
+                else {
+                    selectNationBox.setEnabled(false);
+                }
+                selectNationBox.setSelectedIndex(0);
+            }
+        });
+
         selectNationBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -90,6 +116,7 @@ public class AddAwards extends JFrame {
                 }
                 catch (Exception ex) {
                     ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error: bad date format!", "Error!", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 int idTeam = -1;

@@ -15,7 +15,7 @@ public class EditUserPassword extends JFrame {
     private JButton changeButton;
     private JPanel panel;
 
-    public EditUserPassword(User user) {
+    public EditUserPassword(String email) {
         setContentPane(panel);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -33,7 +33,7 @@ public class EditUserPassword extends JFrame {
                     JOptionPane.showMessageDialog(null, "Error: the new passwords do not match!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else {
-                    var ret = query.changePassword(user.getEmail(), oldPasswordField.getText(), newPasswordField.getText());
+                    var ret = query.changePassword(email, oldPasswordField.getText(), newPasswordField.getText());
                     if(ret) {
                         JOptionPane.showMessageDialog(null, "Password updated successfully!", "Password Changed", JOptionPane.ERROR_MESSAGE);
                     }

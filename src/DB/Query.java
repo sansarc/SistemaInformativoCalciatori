@@ -218,7 +218,7 @@ public class Query {
     }
     public PlayerFeature queryPlayerFeature(int id, Player player) {
         Connection connection = DBconnection.connect();
-        String query = "SELECT feature_name, description, Type_feature  FROM feature JOIN player_feature ON feature.feature_name = player_feature.idFeature JOIN player ON player.idPlayer = playe_feature.idPlayer WHERE player.idPlayer = ?;";
+        String query = "SELECT feature_name, description, Type_feature  FROM feature JOIN player_feature ON feature.feature_name = player_feature.idFeature JOIN player ON player.idPlayer = player_feature.idPlayer WHERE player.idPlayer = ?;";
         var playerFeature = new PlayerFeature();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
@@ -461,7 +461,7 @@ public class Query {
     public List<Integer> select_player_carreer(int idPlayer, boolean isGoalkeeper) {
         List<Integer> ids = new ArrayList<Integer>();
         Connection connection = DBconnection.connect();
-        String query = "SELECT idTransfer,team_name,TO_CHAR(startdate, 'MM/DD/YYYY') AS startdate, TO_CHAR(enddate, 'MM/DD/YYYY') AS enddate, goalsscored, appearances, goalsconceded AS enddate FROM PLAYER_CARREER WHERE IDPlayer = ? ORDER BY STARTDATE DESC";
+        String query = "SELECT idTransfer,team_name,TO_CHAR(startdate, 'MM/DD/YYYY') AS startdate, TO_CHAR(enddate, 'MM/DD/YYYY') AS enddate, goalsscored, appearances, goalsconceded AS goalsconceded  FROM PLAYER_CARREER WHERE IDPlayer = ? ORDER BY STARTDATE DESC";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idPlayer);

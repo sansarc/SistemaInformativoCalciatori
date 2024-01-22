@@ -42,8 +42,9 @@ public class Login extends JFrame {
                 }
                 else
                 {
+                    user_email = u_name;
                     user_type = ut;
-                    new Main(u_name);
+                    new Main();
                     dispose();
                 }
             }

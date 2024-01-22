@@ -19,10 +19,11 @@ public class EditTeam extends JFrame {
     private JSpinner levelSpinner;
     private JButton deleteButton;
     private JPanel panel;
+    private JButton returnInMainPageButton;
 
     public EditTeam() {
         setContentPane(panel);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
         setSize(850, 500);
@@ -38,7 +39,13 @@ public class EditTeam extends JFrame {
         selectTeamBox.setEnabled(false);
         deleteButton.setEnabled(false);
         editButton.setEnabled(false);
-
+        returnInMainPageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Main();
+                dispose();
+            }
+        });
         selectNationBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -75,7 +82,13 @@ public class EditTeam extends JFrame {
                     }
                 }
                 team.setCategory(new_level);
-                query.update_team(team);
+                int idTeam = query.update_team(team);
+                if(idTeam != -1) {
+                    JOptionPane.showMessageDialog(null, "New team successfully updated!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Error while update!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         deleteButton.addActionListener(new ActionListener() {

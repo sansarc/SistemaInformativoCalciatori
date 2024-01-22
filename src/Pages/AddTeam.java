@@ -16,15 +16,24 @@ public class AddTeam extends JFrame {
     private JTextField teamField;
     private JButton insertButton;
     private JTextPane Instructions;
+    private JButton returnInMainPageButton;
 
     public AddTeam() {
         setContentPane(panel);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
+        setTitle("SIC - Add new Team");
         setSize(850, 500);
         Instructions.setEnabled(false);
         //query.select_player_career(player.getId());
+        returnInMainPageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Main();
+                dispose();
+            }
+        });
         insertButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -43,8 +52,13 @@ public class AddTeam extends JFrame {
                 }
                 else {
                     DB.Query query = new Query();
-                    query.insert_team(new Entity.Team(teamField.getText(), nationField.getText(), Integer.parseInt(levelSpinner.getValue().toString()), -1));
-
+                    int idNewTeam = query.insert_team(new Entity.Team(teamField.getText(), nationField.getText(), Integer.parseInt(levelSpinner.getValue().toString()), -1));
+                    if(idNewTeam != -1) {
+                        JOptionPane.showMessageDialog(null, "New team successfully inserted!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "Error while inserting!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         });

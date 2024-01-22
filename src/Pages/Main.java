@@ -60,7 +60,7 @@ public class Main extends JFrame {
     private Query query;
     List<Integer> ids;
 
-    public Main(String username) {
+    public Main() {
         setContentPane(panel);
         setTitle("Sistema Informativo Calciatori");
         var sz = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
@@ -69,8 +69,16 @@ public class Main extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         adminPanel.setVisible(Login.user_type == 'A');
-        userGreetLabel.setText("<html> Hi, <b>" + username + "</b>! </html>");
-        if(Login.user_type == 'A') editProfileButton.setText("Edit Users");
+        userGreetLabel.setText("<html> Hi, <b>" + Login.user_email + "</b>! </html>");
+        if(Login.user_type == 'A') {
+            editProfileButton.setText("Edit Users");
+        }
+        else if(Login.user_type == 'P') {
+            editProfileButton.setText("My profile");
+        }
+        else {
+            editProfileButton.setText("Change password");
+        }
         String[] footOpt = {"\0", "Left", "Right", "Ambidextrous"};
         for (String i : footOpt) footComboBox.addItem(i);
         char[] comboBoxOperator = {'\0','=', '>', '<'};
@@ -101,7 +109,10 @@ public class Main extends JFrame {
                     new EditUser();
                 }
                 else if(Login.user_type == 'P')  {
-                    new Profile( Integer.parseInt(username.substring(0, username.indexOf("@")-1)), true );
+                    new Profile( Integer.parseInt(Login.user_email.substring(0, Login.user_email.indexOf("@"))), true );
+                }
+                else {
+                    new EditUserPassword(Login.user_email);
                 }
             }
         });
@@ -273,19 +284,23 @@ public class Main extends JFrame {
         addPlayerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 new AddOrEditPlayer(null);
+                dispose();
             }
         });
         addTeamButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new AddTeam();
+                dispose();
             }
         });
         editTeamButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new EditTeam();
+                dispose();
             }
         });
         addAwardsButton.addActionListener(new ActionListener() {
@@ -304,6 +319,7 @@ public class Main extends JFrame {
                     }
                 }
                 new AddOrEditFeature(null);
+                dispose();
             }
         });
         resultsTable.addMouseListener(new MouseAdapter() {
@@ -311,13 +327,14 @@ public class Main extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int row = resultsTable.rowAtPoint(e.getPoint());
                 //int col = resultsTable.columnAtPoint(e.getPoint());
-                new Profile(ids.get(row), (Login.user_type == 'A' || (Login.user_type == 'P' && (Integer.parseInt(username.substring(0, username.indexOf("@")-1)) == ids.get(row))) ) );
+                new Profile(ids.get(row), (Login.user_type == 'A' || (Login.user_type == 'P' && (Integer.parseInt(Login.user_email.substring(0, Login.user_email.indexOf("@"))) == ids.get(row))) ) );
             }
         });
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 InitFilters();
+                dispose();
             }
         });
         logoutButton.addActionListener(new ActionListener() {

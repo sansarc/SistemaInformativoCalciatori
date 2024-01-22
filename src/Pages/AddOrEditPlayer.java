@@ -21,12 +21,14 @@ public class AddOrEditPlayer extends JFrame {
     private JPanel panel;
     private JButton insertButton;
     private JTextField imagePathField;
+    private JButton returnInMainPageButton;
 
     public AddOrEditPlayer(Player player) {
         setContentPane(panel);
         setSize(500, 400);
         boolean isEdit = player != null;
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        returnInMainPageButton.setVisible(!isEdit);
+        setDefaultCloseOperation((isEdit) ? DISPOSE_ON_CLOSE : EXIT_ON_CLOSE );
         setLocationRelativeTo(null);
         setVisible(true);
         String[] footOpt = {"\0", "Left", "Right", "Ambidextrous"};
@@ -123,7 +125,13 @@ public class AddOrEditPlayer extends JFrame {
                 verify_roles();
             }
         });
-        insertButton.addActionListener(new ActionListener() {
+        returnInMainPageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Main();
+                dispose();
+            }
+        });        insertButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 char foot = '\0';

@@ -26,6 +26,7 @@ public class Profile extends JFrame {
     private JPanel adminPanel;
     private JButton showPalmaresButton;
     private JButton addFeatureButton;
+    private JButton changePasswordButton;
     private PlayerTransfer playerTransfer;
     private Player_Profile player;
     private PlayerFeature playerFeature;
@@ -43,6 +44,7 @@ public class Profile extends JFrame {
         player = query.getPlayerProfileFromId(id);
         playerFeature = query.queryPlayerFeature(id, (Player) player);
         adminPanel.setVisible(editable);
+        changePasswordButton.setVisible(Login.user_type == 'P' && editable);
         setTitle(player.getName() + " " + player.getLastName());
         try {
             imageLabel.setIcon(new ImageIcon(player.getImage()));
@@ -93,6 +95,12 @@ public class Profile extends JFrame {
                 }
             });
         }
+        changePasswordButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new EditUserPassword(Login.user_email);
+            }
+        });
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -119,6 +127,12 @@ public class Profile extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new Pages.ViewOrDeleteAwardFromPlayer(player);
+            }
+        });
+        addFeatureButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Pages.AddPlayerFeature(player);
             }
         });
     }
