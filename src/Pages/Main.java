@@ -45,8 +45,8 @@ public class Main extends JFrame {
     private JPanel agePanel;
     private JComboBox concededComboBox;
     private JSpinner concededSpinner;
-    private JComboBox apparencesComboBox;
-    private JSpinner apparencesSpinner;
+    private JComboBox appearancesComboBox;
+    private JSpinner appearancesSpinner;
     private JCheckBox freeagentCheckBox;
     private JPanel filterPanel;
     private JButton logoutButton;
@@ -57,42 +57,23 @@ public class Main extends JFrame {
     private JButton addTeamButton;
     private JButton editTeamButton;
     private JButton addAwardsButton;
+    private JButton updateFiltersButton;
     private Query query;
     List<Integer> ids;
 
     public Main(String username) {
         setContentPane(panel);
         setTitle("Sistema Informativo Calciatori");
-        setSize(1100, 600);
+        var sz = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        setSize(sz.width, sz.height);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
         adminPanel.setVisible(Login.user_type == 'A');
         userGreetLabel.setText("<html> Hi, <b>" + username + "</b>! </html>");
-        String[] footOpt = {"\0", "Left", "Right", "Ambidextrous"};
-        for (String i : footOpt) footComboBox.addItem(i);
-        char[] comboBoxOperator = {'\0','=', '>', '<'};
-        for (char i : comboBoxOperator) {
-            ageComboBox.addItem(i);
-            goalsComboBox.addItem(i);
-            concededComboBox.addItem(i);
-            apparencesComboBox.addItem(i);
-        }
-        query = new Query(resultsTable);
-        List<String> nations = query.selectAllNationsForTeams();
-        List<String> levels = new ArrayList<String>();
-        List<Team> teams = new ArrayList<Team>();
-        for (var n : nations) {
-            nationComboBox.addItem(n);
-        }
-        List<String> features = new ArrayList<String>();
-        features.add("\0");
-        features.addAll(query.selectAllFeatures());
-        for(var f : features) {
-            featureComboBox.addItem(f);
-        }
         if(Login.user_type == 'A') editProfileButton.setText("Edit Users");
-        InitFilter();
+        UpdateFilters()
+        InitFilters();
         editProfileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -128,15 +109,15 @@ public class Main extends JFrame {
                 }
             }
         });
-        apparencesComboBox.addActionListener(new ActionListener() {
+        appearancesComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(apparencesComboBox.getSelectedIndex() > 0) {
-                    apparencesSpinner.setEnabled(true);
+                if(appearancesComboBox.getSelectedIndex() > 0) {
+                    appearancesSpinner.setEnabled(true);
                 }
                 else {
-                    apparencesSpinner.setValue(0);
-                    apparencesSpinner.setEnabled(false);
+                    appearancesSpinner.setValue(0);
+                    appearancesSpinner.setEnabled(false);
                 }
             }
         });
@@ -257,14 +238,14 @@ public class Main extends JFrame {
                     String name = nameTextField.getText();
                     String lastname = lastnameTextField.getText();
                     char foot = (footComboBox.getSelectedIndex() > 0) ? footComboBox.getSelectedItem().toString().charAt(0) : '\0';
-                    Player_Profile player = new Player_Profile(name, lastname, null, null, null, foot, Integer.parseInt(goalsSpinner.getValue().toString()), Integer.parseInt(concededSpinner.getValue().toString()), Integer.parseInt(apparencesSpinner.getValue().toString()));
+                    Player_Profile player = new Player_Profile(name, lastname, null, null, null, foot, Integer.parseInt(goalsSpinner.getValue().toString()), Integer.parseInt(concededSpinner.getValue().toString()), Integer.parseInt(appearancesSpinner.getValue().toString()));
                     ids = query.queryPlayers(player,
                             (nationComboBox.getSelectedIndex() > 0) ? new Team(
                                     (teamComboBox.getSelectedIndex() > 0) ? teamComboBox.getSelectedItem().toString() : "",
                                     nationComboBox.getSelectedItem().toString(),
                                     (levelComboBox.getSelectedIndex() > 0) ? Integer.parseInt(levelComboBox.getSelectedItem().toString()) : -1, -1) : null,
                             freeagentCheckBox.isSelected(), retiredCheckBox.isSelected(), positions, goalsComboBox.getSelectedItem().toString().charAt(0),
-                            concededComboBox.getSelectedItem().toString().charAt(0), apparencesComboBox.getSelectedItem().toString().charAt(0), ageComboBox.getSelectedItem().toString().charAt(0),
+                            concededComboBox.getSelectedItem().toString().charAt(0), appearancesComboBox.getSelectedItem().toString().charAt(0), ageComboBox.getSelectedItem().toString().charAt(0),
                             Integer.parseInt(ageSpinner.getValue().toString()), (featureComboBox.getSelectedIndex() > 0) ? featureComboBox.getSelectedItem().toString() : "", true);
                 }
             }
@@ -316,7 +297,13 @@ public class Main extends JFrame {
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                InitFilter();
+                InitFilters();
+            }
+        });
+        updateFiltersButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                UpdateFilters()
             }
         });
         logoutButton.addActionListener(new ActionListener() {
@@ -343,13 +330,13 @@ public class Main extends JFrame {
                 && teamComboBox.getSelectedIndex() < 1 && levelComboBox.getSelectedIndex() < 1 && nationComboBox.getSelectedIndex() < 1
                 && !retiredCheckBox.isSelected()  && !freeagentCheckBox.isSelected()
                 && getCheckedPositions().isEmpty()
-                && !goalsSpinner.isEnabled() && !concededSpinner.isEnabled() && !apparencesSpinner.isEnabled()
+                && !goalsSpinner.isEnabled() && !concededSpinner.isEnabled() && !appearancesSpinner.isEnabled()
                 && footComboBox.getSelectedIndex() < 1 && !ageSpinner.isEnabled() && featureComboBox.getSelectedIndex() < 1
         ) ret = 1;
         else if (Integer.parseInt(ageSpinner.getValue().toString()) < 0) ret = 2;
         else if (Integer.parseInt(goalsSpinner.getValue().toString()) < 0) ret = 3;
         else if (Integer.parseInt(concededSpinner.getValue().toString()) < 0) ret = 4;
-        else if (Integer.parseInt(apparencesSpinner.getValue().toString()) < 0) ret = 5;
+        else if (Integer.parseInt(appearancesSpinner.getValue().toString()) < 0) ret = 5;
         else ret = 0;
         return showMessagePanel(ret);
     }
@@ -359,7 +346,7 @@ public class Main extends JFrame {
         else if (code == 2) JOptionPane.showMessageDialog(null, "Age spinner has to be a not negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
         else if (code == 3) JOptionPane.showMessageDialog(null, "Goals scored spinner has to a not negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
         else if (code == 4) JOptionPane.showMessageDialog(null, "Goals conceded field has to a not negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
-        else if (code == 5) JOptionPane.showMessageDialog(null, "Apparences has to be a not negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+        else if (code == 5) JOptionPane.showMessageDialog(null, "Appearances has to be a not negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
         return code == 0;
     }
     private void verify_roles() {
@@ -373,7 +360,32 @@ public class Main extends JFrame {
             goalkeeperCheckBox.setEnabled(true);
         }
     }
-    private void InitFilter() {
+    private void UpdateFilters() {
+        String[] footOpt = {"\0", "Left", "Right", "Ambidextrous"};
+        for (String i : footOpt) footComboBox.addItem(i);
+        char[] comboBoxOperator = {'\0','=', '>', '<'};
+        for (char i : comboBoxOperator) {
+            ageComboBox.addItem(i);
+            goalsComboBox.addItem(i);
+            concededComboBox.addItem(i);
+            appearancesComboBox.addItem(i);
+        }
+        query = new Query(resultsTable);
+        List<String> nations = query.selectAllNationsForTeams();
+        List<String> levels = new ArrayList<String>();
+        List<Team> teams = new ArrayList<Team>();
+        for (var n : nations) {
+            nationComboBox.addItem(n);
+        }
+        List<String> features = new ArrayList<String>();
+        features.add("\0");
+        features.addAll(query.selectAllFeatures());
+        for(var f : features) {
+            featureComboBox.addItem(f);
+        }
+        InitFilters();
+    }
+    private void InitFilters() {
         nameTextField.setText("");
         lastNameLabel.setText("");
         retiredCheckBox.setSelected(false);
@@ -384,7 +396,7 @@ public class Main extends JFrame {
         goalkeeperCheckBox.setSelected(false);
         goalsComboBox.setSelectedIndex(0);
         concededComboBox.setSelectedIndex(0);
-        apparencesComboBox.setSelectedIndex(0);
+        appearancesComboBox.setSelectedIndex(0);
         footComboBox.setSelectedIndex(0);
         ageComboBox.setSelectedIndex(0);
         featureComboBox.setSelectedIndex(0);
@@ -397,7 +409,7 @@ public class Main extends JFrame {
         concededComboBox.setEnabled(false);
         concededSpinner.setEnabled(false);
         ageSpinner.setEnabled(false);
-        apparencesSpinner.setEnabled(false);
+        appearancesSpinner.setEnabled(false);
         goalsSpinner.setEnabled(false);
         goalkeeperCheckBox.setEnabled(true);
         defenderCheckBox.setEnabled(true);

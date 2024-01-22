@@ -145,7 +145,7 @@
               <text value="Goals Scored"/>
             </properties>
           </component>
-          <component id="fb0d2" class="javax.swing.JSpinner" binding="apparencesSpinner">
+          <component id="fb0d2" class="javax.swing.JSpinner" binding="appearancesSpinner">
             <constraints>
               <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>

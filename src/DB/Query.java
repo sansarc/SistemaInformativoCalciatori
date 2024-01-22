@@ -42,14 +42,14 @@ public class Query {
     }
     //Queries on Player
     public List<Integer> queryPlayers(Player_Profile playerRequest, Team actualTeam, boolean freeagent, boolean retired,
-                                      List<String> positions, char goals_c, char conceded_c, char apparences_c, char age_c, int age, String feature, boolean isFromMain) {
+                                      List<String> positions, char goals_c, char conceded_c, char appearances_c, char age_c, int age, String feature, boolean isFromMain) {
         Connection connection = DBconnection.connect();
-        String query = QueryTools.getQuerySearchPlayer(playerRequest, actualTeam, freeagent, retired, positions, goals_c, conceded_c, apparences_c, age_c, feature, age, null);
+        String query = QueryTools.getQuerySearchPlayer(playerRequest, actualTeam, freeagent, retired, positions, goals_c, conceded_c, appearances_c, age_c, feature, age, null);
         List<Integer> ids = new ArrayList<>();
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             int index = 1;
-            QueryTools.getQuerySearchPlayer(playerRequest, actualTeam, freeagent, retired, positions, goals_c, conceded_c, apparences_c, age_c, feature, age, statement);
+            QueryTools.getQuerySearchPlayer(playerRequest, actualTeam, freeagent, retired, positions, goals_c, conceded_c, appearances_c, age_c, feature, age, statement);
             System.out.println(statement);
             ResultSet rs = statement.executeQuery();
             ResultSetMetaData metaData = rs.getMetaData();
@@ -387,24 +387,24 @@ public class Query {
             return idTeam;
         }
     }
-    public int insert_player_team(int idPlayer, int idTeam, java.util.Date startDate, java.util.Date endDate, int goalsscored, int goalsconceded, boolean isGoalkeeper, int apparences) {
+    public int insert_player_team(int idPlayer, int idTeam, java.util.Date startDate, java.util.Date endDate, int goalsscored, int goalsconceded, boolean isGoalkeeper, int appearances) {
         int transferId = -1;
         Connection connection = DBconnection.connect();
         String query = "";
         if(endDate != null) {
             if(isGoalkeeper) {
-                query = "INSERT INTO PLAYER_TEAM(idplayer,idteam,startdate,goalsscored,apparences,goalsconceded,enddate) VALUES(?,?,?,?,?,?,?) RETURNING IDTRANSFER";
+                query = "INSERT INTO PLAYER_TEAM(idplayer,idteam,startdate,goalsscored,appearances,goalsconceded,enddate) VALUES(?,?,?,?,?,?,?) RETURNING IDTRANSFER";
             }
             else {
-                query = "INSERT INTO PLAYER_TEAM(idplayer,idteam,startdate,goalsscored,apparences,enddate) VALUES(?,?,?,?,?,?) RETURNING IDTRANSFER";
+                query = "INSERT INTO PLAYER_TEAM(idplayer,idteam,startdate,goalsscored,appearances,enddate) VALUES(?,?,?,?,?,?) RETURNING IDTRANSFER";
             }
         }
         else {
             if(isGoalkeeper) {
-                query = "INSERT INTO PLAYER_TEAM(idplayer,idteam,startdate,goalsscored,apparences,goalsconceded) VALUES(?,?,?,?,?,?) RETURNING IDTRANSFER";
+                query = "INSERT INTO PLAYER_TEAM(idplayer,idteam,startdate,goalsscored,appearances,goalsconceded) VALUES(?,?,?,?,?,?) RETURNING IDTRANSFER";
             }
             else {
-                query = "INSERT INTO PLAYER_TEAM(idplayer,idteam,startdate,goalsscored,apparences) VALUES(?,?,?,?,?) RETURNING IDTRANSFER";
+                query = "INSERT INTO PLAYER_TEAM(idplayer,idteam,startdate,goalsscored,appearances) VALUES(?,?,?,?,?) RETURNING IDTRANSFER";
             }
         }
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -413,7 +413,7 @@ public class Query {
             statement.setInt(++i, idTeam);
             statement.setDate(++i, new java.sql.Date(startDate.getTime()));
             statement.setInt(++i, goalsscored);
-            statement.setInt(++i, apparences);
+            statement.setInt(++i, appearances);
             if(isGoalkeeper) {
                 statement.setInt(++i, goalsconceded);
             }
@@ -461,7 +461,7 @@ public class Query {
     public List<Integer> select_player_carreer(int idPlayer, boolean isGoalkeeper) {
         List<Integer> ids = new ArrayList<Integer>();
         Connection connection = DBconnection.connect();
-        String query = "SELECT idTransfer,team_name,TO_CHAR(startdate, 'MM/DD/YYYY') AS startdate, TO_CHAR(enddate, 'MM/DD/YYYY') AS enddate, goalsscored, apparences, goalsconceded AS enddate FROM PLAYER_CARREER WHERE IDPlayer = ? ORDER BY STARTDATE DESC";
+        String query = "SELECT idTransfer,team_name,TO_CHAR(startdate, 'MM/DD/YYYY') AS startdate, TO_CHAR(enddate, 'MM/DD/YYYY') AS enddate, goalsscored, appearances, goalsconceded AS enddate FROM PLAYER_CARREER WHERE IDPlayer = ? ORDER BY STARTDATE DESC";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idPlayer);

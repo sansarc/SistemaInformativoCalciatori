@@ -23,7 +23,7 @@ import java.util.Iterator;
 
 public class QueryTools {
     public static String getQuerySearchPlayer(Player_Profile playerRequest, Entity.Team actualTeam, boolean freeagent, boolean retired,
-                                                List<String> positions, char goals_c, char conceded_c, char apparences_c, char age_c, String feature, int age, PreparedStatement statement) {
+                                                List<String> positions, char goals_c, char conceded_c, char appearances_c, char age_c, String feature, int age, PreparedStatement statement) {
 
         String query = "SELECT DISTINCT p.player_name, p.lastname";
         try {
@@ -122,14 +122,14 @@ public class QueryTools {
                 statement.setInt(++index, playerRequest.getGoals());
             }
         }
-        if(apparences_c != '\0') {
+        if(appearances_c != '\0') {
             if(forQuery) {
                 if(conditional_and) whereString += "AND ";
-                whereString += "P.APPARENCES " + apparences_c + " ? ";
+                whereString += "P.appearances " + appearances_c + " ? ";
                 conditional_and = true;
             }
             else {
-                statement.setInt(++index, playerRequest.getApparences());
+                statement.setInt(++index, playerRequest.getAppearances());
             }
         }
         if(age_c != '\0') {
@@ -183,7 +183,7 @@ public class QueryTools {
             case "idteam" -> "";
             case "goalsscored" -> "Goals Scored";
             case "goalsconceded" -> "Goals Conceded";
-            case "apparences" -> "Apparences";
+            case "appearances" -> "Appearances";
             case "name" -> "Name";
             case "windate" -> "Date";
             default -> columnName;
