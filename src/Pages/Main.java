@@ -57,7 +57,6 @@ public class Main extends JFrame {
     private JButton addTeamButton;
     private JButton editTeamButton;
     private JButton addAwardsButton;
-    private JButton updateFiltersButton;
     private Query query;
     List<Integer> ids;
 
@@ -72,7 +71,28 @@ public class Main extends JFrame {
         adminPanel.setVisible(Login.user_type == 'A');
         userGreetLabel.setText("<html> Hi, <b>" + username + "</b>! </html>");
         if(Login.user_type == 'A') editProfileButton.setText("Edit Users");
-        UpdateFilters()
+        String[] footOpt = {"\0", "Left", "Right", "Ambidextrous"};
+        for (String i : footOpt) footComboBox.addItem(i);
+        char[] comboBoxOperator = {'\0','=', '>', '<'};
+        for (char i : comboBoxOperator) {
+            ageComboBox.addItem(i);
+            goalsComboBox.addItem(i);
+            concededComboBox.addItem(i);
+            appearancesComboBox.addItem(i);
+        }
+        query = new Query(resultsTable);
+        List<String> nations = query.selectAllNationsForTeams();
+        List<String> levels = new ArrayList<String>();
+        List<Team> teams = new ArrayList<Team>();
+        for (var n : nations) {
+            nationComboBox.addItem(n);
+        }
+        List<String> features = new ArrayList<String>();
+        features.add("\0");
+        features.addAll(query.selectAllFeatures());
+        for(var f : features) {
+            featureComboBox.addItem(f);
+        }
         InitFilters();
         editProfileButton.addActionListener(new ActionListener() {
             @Override
@@ -300,12 +320,6 @@ public class Main extends JFrame {
                 InitFilters();
             }
         });
-        updateFiltersButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                UpdateFilters()
-            }
-        });
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -359,31 +373,6 @@ public class Main extends JFrame {
         {
             goalkeeperCheckBox.setEnabled(true);
         }
-    }
-    private void UpdateFilters() {
-        String[] footOpt = {"\0", "Left", "Right", "Ambidextrous"};
-        for (String i : footOpt) footComboBox.addItem(i);
-        char[] comboBoxOperator = {'\0','=', '>', '<'};
-        for (char i : comboBoxOperator) {
-            ageComboBox.addItem(i);
-            goalsComboBox.addItem(i);
-            concededComboBox.addItem(i);
-            appearancesComboBox.addItem(i);
-        }
-        query = new Query(resultsTable);
-        List<String> nations = query.selectAllNationsForTeams();
-        List<String> levels = new ArrayList<String>();
-        List<Team> teams = new ArrayList<Team>();
-        for (var n : nations) {
-            nationComboBox.addItem(n);
-        }
-        List<String> features = new ArrayList<String>();
-        features.add("\0");
-        features.addAll(query.selectAllFeatures());
-        for(var f : features) {
-            featureComboBox.addItem(f);
-        }
-        InitFilters();
     }
     private void InitFilters() {
         nameTextField.setText("");
