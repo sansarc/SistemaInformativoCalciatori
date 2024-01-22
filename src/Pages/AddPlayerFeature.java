@@ -31,7 +31,14 @@ public class AddPlayerFeature extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(featureComboBox.getSelectedIndex() > 1) {
-                    query.insertPlayerFeature(player.getId(), featureComboBox.getSelectedItem().toString());
+                    var ret = query.insertPlayerFeature(player.getId(), featureComboBox.getSelectedItem().toString());
+                    if(ret != -1) {
+                        JOptionPane.showMessageDialog(null, "Instance added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "Error: instance could not be inserted!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
                 }
             }
         });

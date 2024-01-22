@@ -31,7 +31,14 @@ public class ViewOrDeleteAwardFromPlayer extends JFrame {
                 if(Login.user_type == 'A') {
                     int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the selected award?", "Delete award", JOptionPane.YES_NO_OPTION);
                     if (choice == JOptionPane.YES_OPTION) {
-                        query.deleteFromId("AWARD", "idaward", awards.get(row).getId());
+                        var ok_ = query.deleteFromId("AWARD", "idaward", awards.get(row).getId());
+                        if(ok_) {
+                            JOptionPane.showMessageDialog(null, "Award successfully deleted!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                        else {
+                            JOptionPane.showMessageDialog(null, "Error: award was not deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+
                     }
                 }
             }

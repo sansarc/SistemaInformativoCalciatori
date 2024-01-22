@@ -106,7 +106,19 @@ public class Profile extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the player \"" + player.getName() + " " + player.getLastName() + "\"?", "Delete player", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    query.deleteFromId("PLAYER", "idplayer", player.getId());
+                    var ok_ = query.deleteFromId("PLAYER", "idplayer", player.getId());
+                    if(ok_) {
+                        JOptionPane.showMessageDialog(null, "Player successfully deleted!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        if(Login.user_type == 'P') {
+                            JOptionPane.showMessageDialog(null, "The player associated with the user has been deleted, therefore the user has also been delete!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            new Login();
+                            dispose();
+                        }
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "Error: Player was not deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
                 }
             }
         });
@@ -157,7 +169,14 @@ public class Profile extends JFrame {
         if (selectedOption != JOptionPane.CLOSED_OPTION) {
             if(editable) {
                 Query query = new Query();
-                query.deletePlayerFeature(features.get(selectedOption).getName(), idPlayer);
+                var ok_ = query.deletePlayerFeature(features.get(selectedOption).getName(), idPlayer);
+                if(ok_) {
+                    JOptionPane.showMessageDialog(null, "Feature successfully deleted!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Error: feature was not deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
             }
             else {
                 JOptionPane.showMessageDialog(component, features.get(selectedOption).getDescription());

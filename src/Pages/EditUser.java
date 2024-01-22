@@ -63,7 +63,14 @@ public class EditUser extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the selected user (" + emailBox.getSelectedItem().toString()  + ")?", "Delete user", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    query.deleteFromId("SIC_USER", "EMAIL", emailBox.getSelectedItem().toString());
+                    var ok_ = query.deleteFromId("SIC_USER", "EMAIL", emailBox.getSelectedItem().toString());
+                    if(ok_) {
+                        JOptionPane.showMessageDialog(null, "User successfully deleted!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "Error: user was not deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
                 }
             }
         });

@@ -138,8 +138,14 @@ public class AddOrEditCarreer extends JFrame {
                 if(Login.user_type == 'A') {
                     int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the selected record?", "Delete row", JOptionPane.YES_NO_OPTION);
                     if (choice == JOptionPane.YES_OPTION) {
-                        query.deleteFromId("PLAYER_TEAM", "idtransfer", ids.get(row));
-                        ids = query.select_player_carreer(player.getId(), goalkeeperPanel.isVisible());
+                        var ok_ = query.deleteFromId("PLAYER_TEAM", "idtransfer", ids.get(row));
+                        if(ok_) {
+                            JOptionPane.showMessageDialog(null, "Record successfully deleted!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            ids = query.select_player_carreer(player.getId(), goalkeeperPanel.isVisible());
+                        }
+                        else {
+                            JOptionPane.showMessageDialog(null, "Error: record was not deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 }
             }

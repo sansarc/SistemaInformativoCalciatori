@@ -71,7 +71,13 @@ public class AddOrEditFeature extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the selected feature?", "Delete feature", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    query.deleteFromId("FEATURE", "FEATURE_NAME", feature.getName());
+                    var ok_ = query.deleteFromId("FEATURE", "FEATURE_NAME", feature.getName());
+                    if(ok_) {
+                        JOptionPane.showMessageDialog(null, "Feature successfully deleted!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "Error: feature was not deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         });

@@ -103,7 +103,14 @@ public class EditTeam extends JFrame {
                 }
                 int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the selected team?", "Delete team", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    query.deleteFromId("TEAM", "idteam", team.getId());
+                    var ok_ = query.deleteFromId("TEAM", "idteam", team.getId());
+                    if(ok_) {
+                        JOptionPane.showMessageDialog(null, "Team successfully deleted!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, "Team: feature was not deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
                 }
             }
         });
