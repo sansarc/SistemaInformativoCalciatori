@@ -30,4 +30,4 @@ bin/
 .DS_Store
 
 ### configuration file ###
-.config.properties da includere quando accederemo con le credenziali di un db hostato.
+.config.properties
