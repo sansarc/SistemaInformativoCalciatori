@@ -4,4 +4,4 @@ out/
 !**/src/test/**/out/
 
 ### configuration file ###
-.config.properties/
+.config.properties
