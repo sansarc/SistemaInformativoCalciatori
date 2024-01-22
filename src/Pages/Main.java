@@ -292,7 +292,7 @@ public class Main extends JFrame {
         addTeamButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new AddTeam();
+                new AddTeam(true);
                 dispose();
             }
         });

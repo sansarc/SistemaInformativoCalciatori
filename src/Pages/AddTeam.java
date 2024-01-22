@@ -18,9 +18,9 @@ public class AddTeam extends JFrame {
     private JTextPane Instructions;
     private JButton returnInMainPageButton;
 
-    public AddTeam() {
+    public AddTeam(boolean from_main) {
         setContentPane(panel);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation( (from_main) ? EXIT_ON_CLOSE : DISPOSE_ON_CLOSE );
         setLocationRelativeTo(null);
         setVisible(true);
         setTitle("SIC - Add new Team");

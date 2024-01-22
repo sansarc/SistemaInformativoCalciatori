@@ -25,6 +25,7 @@ public class AddOrEditCarreer extends JFrame {
     private JPanel goalkeeperPanel;
     private JSpinner concededspinner;
     private JSpinner appearancesSpinner;
+    private JButton addNewTeamButton;
     List<Integer> ids;
 
     public AddOrEditCarreer(Player player) {
@@ -55,6 +56,12 @@ public class AddOrEditCarreer extends JFrame {
         insertButton.setEnabled(false);
         goalkeeperPanel.setVisible(player.getPosition().contains("G"));
         ids = query.select_player_carreer(player.getId(), goalkeeperPanel.isVisible());
+        addNewTeamButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AddTeam(false);
+            }
+        });
         selectNationBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
