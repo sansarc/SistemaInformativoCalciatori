@@ -21,6 +21,7 @@ public class ViewOrDeleteAwardFromPlayer extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         setSize(850, 500);
+        setTitle("SIC - Award of " + player.getName() + " " + player.getLastName());
         Query query = new Query(awardsTable);
         List<Award> awards = query.select_palmares_from_player(player.getId());
         awardsTable.addMouseListener(new MouseAdapter() {

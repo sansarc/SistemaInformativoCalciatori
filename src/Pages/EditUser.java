@@ -21,7 +21,7 @@ public class EditUser extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         setSize(850, 500);
-
+        setTitle("SIC - Edit Users");
         Query query = new Query();
         List<User> users = query.selectUser("","",true);
         emailBox.addItem("");

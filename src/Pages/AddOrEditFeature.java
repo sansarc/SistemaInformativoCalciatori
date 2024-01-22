@@ -52,6 +52,10 @@ public class AddOrEditFeature extends JFrame {
                     JOptionPane.showMessageDialog(null, "Error: all fields are required!", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                else if(descriptionPane.getText().length() > 128) {
+                    JOptionPane.showMessageDialog(null, "Error: description can contain a maximum of 128 characters!", "Error", JOptionPane.ERROR_MESSAGE);
+
+                }
                 var featureRequest = new Feature(nameField.getText(), descriptionPane.getText(), typeComboBox.getSelectedItem().toString().charAt(0));
                 boolean _ok = false;
                 if(isEdit) {

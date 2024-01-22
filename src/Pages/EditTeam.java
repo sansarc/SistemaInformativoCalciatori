@@ -27,7 +27,7 @@ public class EditTeam extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         setSize(850, 500);
-
+        setTitle("SIC - Edit Team");
         Query query = new Query();
         List<String> nations = query.selectAllNationsForTeams();
         List<String> levels = new ArrayList<String>();

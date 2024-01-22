@@ -351,7 +351,7 @@ public class Query {
         List<Team> teams = new ArrayList<Team>();
         teams.add(new Team("", nation, level, -1));
         Connection connection = DBconnection.connect();
-        String query = "SELECT TEAM_NAME, NATION, LEVEL, IDTEAM FROM TEAM WHERE nation = ? and level = ?";
+        String query = "SELECT TEAM_NAME, NATION, LEVEL, IDTEAM FROM TEAM WHERE nation = ? and level = ? ORDER BY TEAM_NAME ";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, nation);
             statement.setInt(2, level);
@@ -542,7 +542,7 @@ public class Query {
             var rs = statement.executeQuery();
             if (rs.next()) {
                 idTeam = rs.getInt(1);
-                JOptionPane.showMessageDialog(null, "Team successfullY inserted!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                //JOptionPane.showMessageDialog(null, "Team successfullY inserted!", "Success", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (SQLException se) {
             se.printStackTrace();
@@ -631,57 +631,57 @@ public class Query {
         }
     }
     public boolean deleteFromId(String tableName, String idName, int idValue){
-        boolean rs = false;
+        int rs = 0;
         String query = "DELETE FROM " + tableName + " WHERE " + idName + " = ?";
         Connection connection = DBconnection.connect();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idValue);
             System.out.println(statement);
-            rs = statement.execute();
+            rs = statement.executeUpdate();
         } catch (SQLException se) {
             se.printStackTrace();
         } catch(Exception ex) {
             ex.printStackTrace();
         }finally {
             DBconnection.disconnect(connection);
-            return rs;
+            return (rs > 0);
         }
     }
     public boolean deletePlayerFeature(String idFeature, int idPlayer){
-        boolean rs = false;
+        int rs = 0;
         String query = "DELETE FROM PLAYER_FEATURE WHERE idPlayer = ? and idFeature = ?";
         Connection connection = DBconnection.connect();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idPlayer);
             statement.setString(2, idFeature);
             System.out.println(statement);
-            rs = statement.execute();
+            rs = statement.executeUpdate();
         } catch (SQLException se) {
             se.printStackTrace();
         } catch(Exception ex) {
             ex.printStackTrace();
         }finally {
             DBconnection.disconnect(connection);
-            return rs;
+            return (rs > 0);
         }
     }
 
 
     public boolean deleteFromId(String tableName, String idName, String idValue){
-        boolean rs = false;
+        int rs = 0;
         String query = "DELETE FROM " + tableName + " WHERE " + idName + " = ?";
         Connection connection = DBconnection.connect();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, idValue);
             System.out.println(statement);
-            rs = statement.execute();
+            rs = statement.executeUpdate();
         } catch (SQLException se) {
             se.printStackTrace();
         } catch(Exception ex) {
             ex.printStackTrace();
         }finally {
             DBconnection.disconnect(connection);
-            return rs;
+            return (rs > 0);
         }
     }
 

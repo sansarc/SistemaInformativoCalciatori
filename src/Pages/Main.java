@@ -313,12 +313,14 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(featureComboBox.getSelectedIndex() > 0) {
-                    int choice = JOptionPane.showConfirmDialog(null, "Si ?", "Do you want to modify the  \"" + featureComboBox.getSelectedItem().toString() + "\" features?", JOptionPane.YES_NO_OPTION);
+                    int choice = JOptionPane.showConfirmDialog(null, "Do you want to modify the  \"" + featureComboBox.getSelectedItem().toString() + "\" features?", "Add Or Edit FFeatures", JOptionPane.YES_NO_OPTION);
                     if (choice == JOptionPane.YES_OPTION) {
                         new AddOrEditFeature(query.selectFeature(featureComboBox.getSelectedItem().toString()));
                     }
                 }
-                new AddOrEditFeature(null);
+                else {
+                    new AddOrEditFeature(null);
+                }
                 dispose();
             }
         });

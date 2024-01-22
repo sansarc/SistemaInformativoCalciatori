@@ -218,7 +218,6 @@ public class AddOrEditPlayer extends JFrame {
                     player_i.setLastName(playerLastName.getText());
                     player_i.setPosition(positions);
                     new Pages.AddOrEditCarreer(player_i);
-                    dispose();
                 }
             }
         });

@@ -21,7 +21,7 @@ public class EditUserPassword extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         setSize(850, 500);
-
+        setTitle("Edit password");
         Query query = new Query();
         changeButton.addActionListener(new ActionListener() {
             @Override
