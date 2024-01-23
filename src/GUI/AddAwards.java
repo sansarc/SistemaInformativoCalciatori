@@ -1,4 +1,4 @@
-package Pages;
+package GUI;
 
 import DB.Query;
 import DB.QueryTools;

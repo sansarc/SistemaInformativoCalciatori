@@ -1,11 +1,10 @@
-package Pages;
+package GUI;
 
 import DB.Query;
 import Entity.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 public class EditUser extends JFrame {

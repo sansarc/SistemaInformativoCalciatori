@@ -1,4 +1,4 @@
-package Pages;
+package GUI;
 
 import Entity.*;
 import DB.Query;
@@ -126,25 +126,25 @@ public class Profile extends JFrame {
         editPlayerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Pages.AddOrEditPlayer(player);
+                new GUI.AddOrEditPlayer(player);
             }
         });
         showCarreerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Pages.AddOrEditCarreer(player);
+                new GUI.AddOrEditCarreer(player);
             }
         });
         showPalmaresButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Pages.ViewOrDeleteAwardFromPlayer(player);
+                new GUI.ViewOrDeleteAwardFromPlayer(player);
             }
         });
         addFeatureButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Pages.AddPlayerFeature(player);
+                new GUI.AddPlayerFeature(player);
             }
         });
     }

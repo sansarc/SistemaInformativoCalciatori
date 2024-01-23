@@ -1,4 +1,4 @@
-package Pages;
+package GUI;
 import Entity.*;
 import DB.*;
 import javax.swing.*;

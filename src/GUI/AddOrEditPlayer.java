@@ -1,4 +1,4 @@
-package Pages;
+package GUI;
 
 import DB.Query;
 import Entity.Player;
@@ -217,7 +217,7 @@ public class AddOrEditPlayer extends JFrame {
                     player_i.setName(playerName.getText());
                     player_i.setLastName(playerLastName.getText());
                     player_i.setPosition(positions);
-                    new Pages.AddOrEditCarreer(player_i);
+                    new GUI.AddOrEditCarreer(player_i);
                 }
             }
         });

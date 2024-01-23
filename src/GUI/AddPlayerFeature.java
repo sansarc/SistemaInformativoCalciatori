@@ -1,4 +1,4 @@
-package Pages;
+package GUI;
 import DB.Query;
 import Entity.*;
 import javax.swing.*;
