@@ -34,7 +34,7 @@ public class EditUserPassword extends JFrame {
                 else {
                     var ret = query.changePassword(email, oldPasswordField.getText(), newPasswordField.getText());
                     if(ret) {
-                        JOptionPane.showMessageDialog(null, "Password updated successfully!", "Password Changed", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Password updated successfully!", "Password Changed", JOptionPane.INFORMATION_MESSAGE);
                     }
                     else {
                         JOptionPane.showMessageDialog(null, "Error: old password is incorrect!", "Error", JOptionPane.ERROR_MESSAGE);
