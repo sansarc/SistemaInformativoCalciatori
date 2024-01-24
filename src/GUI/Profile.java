@@ -157,7 +157,7 @@ public class Profile extends JFrame {
 
         int selectedOption = JOptionPane.showOptionDialog(
                 component,
-                (editable) ? "What feature do you want to delete?" : "What feature do you want to describe?",
+                (editable) ? "What feature do you want to delete?" : "\n" + "Which feature would you like to view the description for?",
                 (editable) ? "Delete Feature" : "Feature Description",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
