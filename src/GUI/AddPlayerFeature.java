@@ -20,7 +20,7 @@ public class AddPlayerFeature extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         Query query = new Query();
-        playerLabel.setText("Insert Feature for: " + player.getName() + " " + player.getLastName());
+        playerLabel.setText("Add Feature for: " + player.getName() + " " + player.getLastName());
         List<String> features = new ArrayList<String>();
         features.add("\0");
         features.addAll(query.selectAllFeatures());

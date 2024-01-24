@@ -71,7 +71,7 @@ public class EditTeam extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 var new_level = Integer.parseInt(levelSpinner.getValue().toString());
                 if(new_level <0 ) {
-                    JOptionPane.showMessageDialog(null, "The level cannot be a negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Level cannot be a negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
                 Team team = new Team();
@@ -87,7 +87,7 @@ public class EditTeam extends JFrame {
                     JOptionPane.showMessageDialog(null, "New team successfully updated!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "Error while update!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error while updating!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

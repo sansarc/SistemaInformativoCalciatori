@@ -30,7 +30,7 @@ public class AddAwards extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         setSize(850, 500);
-        setTitle("SIC - Insertion of a new Award");
+        setTitle("SIC - Add a new Award");
         Query query = new Query();
         List<String> nations = query.selectAllNationsForTeams();
         List<String> levels = new ArrayList<String>();
@@ -141,7 +141,7 @@ public class AddAwards extends JFrame {
                     JOptionPane.showMessageDialog(null, "Error: insertion failed!", "Error!", JOptionPane.ERROR_MESSAGE);
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "Insertion successfull!", "Success!", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Insertion successful!", "Success!", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });

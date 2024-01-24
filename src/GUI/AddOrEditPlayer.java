@@ -195,7 +195,7 @@ public class AddOrEditPlayer extends JFrame {
                     }
                 }
                 catch(Exception ex) {
-                    JOptionPane.showMessageDialog(null, "error, path: \" + imagePathField.getText() + \" not valid!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error: invalid path \" + imagePathField.getText() + \"", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 Player playerRequest = new Player(playerName.getText(), playerLastName.getText(), positions, birthdate, null, foot, -1);
                 var query = new Query();
@@ -208,10 +208,10 @@ public class AddOrEditPlayer extends JFrame {
                     playerId = query.updatePlayer(playerRequest);
                 }
                 if(playerId == -1) {
-                    JOptionPane.showMessageDialog(null, "Error: it was not possible to insert the player!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error: player not inserted!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else {
-                    JOptionPane.showMessageDialog(null, "Player insert with success!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Player inserted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     Player player_i = new Player();
                     player_i.setId(playerId);
                     player_i.setName(playerName.getText());

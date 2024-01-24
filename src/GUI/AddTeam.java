@@ -48,7 +48,7 @@ public class AddTeam extends JFrame {
                     JOptionPane.showMessageDialog(null, "Error: the team name field cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else if(nationField.getText().length() != 2) {
-                    JOptionPane.showMessageDialog(null, "Error: the nation must be expressed through its ISO-3166-1 code!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error: the nation must be expressed by its ISO-3166-1 code!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else {
                     DB.Query query = new Query();
@@ -57,7 +57,7 @@ public class AddTeam extends JFrame {
                         JOptionPane.showMessageDialog(null, "New team successfully inserted!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     }
                     else {
-                        JOptionPane.showMessageDialog(null, "Error while inserting!", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error while inserting data!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }

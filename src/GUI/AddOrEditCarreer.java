@@ -91,7 +91,7 @@ public class AddOrEditCarreer extends JFrame {
                         return;
                     }
                     else if( (Integer.parseInt(scorespinner.getValue().toString()) > 0 || Integer.parseInt(concededspinner.getValue().toString()) > 0) && Integer.parseInt(appearancesSpinner.getValue().toString()) == 0 ) {
-                        JOptionPane.showMessageDialog(null, "Error: if the appearances is 0 there can be no goals conceded or scored!", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error: if the appearances are 0 no goals can be conceded or scored!", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     Date from_date = new Date();

@@ -45,14 +45,14 @@ public class EditUser extends JFrame {
         editUserTypeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int choice = JOptionPane.showConfirmDialog(null, "Do yo want to make the " +  emailBox.getSelectedItem().toString() + " user administrator?", "Update user", JOptionPane.YES_NO_OPTION);
+                int choice = JOptionPane.showConfirmDialog(null, "Do yo want to set " +  emailBox.getSelectedItem().toString() + " as admin?", "Update user", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
                     boolean ok_ = query.updateUserType(emailBox.getSelectedItem().toString());
                     if(ok_) {
                         JOptionPane.showMessageDialog(null, "User type updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     }
                     else {
-                        JOptionPane.showMessageDialog(null, "error updating user type!", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error while updating user type!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }

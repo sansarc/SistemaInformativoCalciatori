@@ -29,7 +29,7 @@ public class EditUserPassword extends JFrame {
                     JOptionPane.showMessageDialog(null, "Error: all fields are required!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else if( ! newPasswordField.getText().equals(newPasswordField2.getText()) ) {
-                    JOptionPane.showMessageDialog(null, "Error: the new passwords do not match!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error: passwords do not match!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 else {
                     var ret = query.changePassword(email, oldPasswordField.getText(), newPasswordField.getText());
@@ -37,7 +37,7 @@ public class EditUserPassword extends JFrame {
                         JOptionPane.showMessageDialog(null, "Password updated successfully!", "Password Changed", JOptionPane.ERROR_MESSAGE);
                     }
                     else {
-                        JOptionPane.showMessageDialog(null, "Error: the old password is incorrect!", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error: old password is incorrect!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
