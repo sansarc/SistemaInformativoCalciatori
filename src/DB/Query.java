@@ -213,8 +213,9 @@ public class Query {
             ex.printStackTrace();
         }finally {
             DBconnection.disconnect(connection);
-            return idPlayerRet;
         }
+
+        return idPlayerRet;
     }
     public PlayerFeature queryPlayerFeature(int id, Player player) {
         Connection connection = DBconnection.connect();
