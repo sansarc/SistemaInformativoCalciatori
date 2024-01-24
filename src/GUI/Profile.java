@@ -110,13 +110,13 @@ public class Profile extends JFrame {
                     if(ok_) {
                         JOptionPane.showMessageDialog(null, "Player successfully deleted!", "Success", JOptionPane.INFORMATION_MESSAGE);
                         if(Login.user_type == 'P') {
-                            JOptionPane.showMessageDialog(null, "The player associated with the user has been deleted, therefore the user has also been delete!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "The player associated to this user has been deleted, therefore the user has also been deleted!", "Success", JOptionPane.INFORMATION_MESSAGE);
                             new Login();
                             dispose();
                         }
                     }
                     else {
-                        JOptionPane.showMessageDialog(null, "Error: Player was not deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error: player was not deleted!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
 
                 }
@@ -157,7 +157,7 @@ public class Profile extends JFrame {
 
         int selectedOption = JOptionPane.showOptionDialog(
                 component,
-                (editable) ? "What feature do you want to be delete?" : "What feature do you want to be described?",
+                (editable) ? "What feature do you want to delete?" : "What feature do you want to describe?",
                 (editable) ? "Delete Feature" : "Feature Description",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.QUESTION_MESSAGE,

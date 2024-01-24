@@ -376,10 +376,10 @@ public class Main extends JFrame {
 
     private boolean showMessagePanel(int code) {
         if (code == 1) JOptionPane.showMessageDialog(null, "Invalid search, form can't be empty", "Invalid Search", JOptionPane.WARNING_MESSAGE);
-        else if (code == 2) JOptionPane.showMessageDialog(null, "Age spinner has to be a not negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
-        else if (code == 3) JOptionPane.showMessageDialog(null, "Goals scored spinner has to a not negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
-        else if (code == 4) JOptionPane.showMessageDialog(null, "Goals conceded field has to a not negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
-        else if (code == 5) JOptionPane.showMessageDialog(null, "Appearances has to be a not negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+        else if (code == 2) JOptionPane.showMessageDialog(null, "Age spinner cannot have a negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+        else if (code == 3) JOptionPane.showMessageDialog(null, "Goals scored spinner cannot have a negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+        else if (code == 4) JOptionPane.showMessageDialog(null, "Goals conceded field cannot be a negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
+        else if (code == 5) JOptionPane.showMessageDialog(null, "Appearances cannot be a negative number", "Invalid Search", JOptionPane.WARNING_MESSAGE);
         return code == 0;
     }
     private void verify_roles() {
