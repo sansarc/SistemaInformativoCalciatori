@@ -119,7 +119,7 @@ public class QueryTools {
                 conditional_and = true;
             }
             else {
-                statement.setInt(++index, playerRequest.getGoals());
+                statement.setInt(++index, playerRequest.getGoalsConceded());
             }
         }
         if(appearances_c != '\0') {
@@ -179,6 +179,8 @@ public class QueryTools {
             case "lastname" -> "Last Name";
             case "team_name" -> "Team";
             case "startdate" -> "Start Date";
+            case "startdate_formatted" -> "Start Date";
+            case "enddate_formatted" -> "End Date";
             case "enddate" -> "End Date";
             case "idteam" -> "";
             case "goalsscored" -> "Goals Scored";

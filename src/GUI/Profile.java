@@ -73,7 +73,7 @@ public class Profile extends JFrame {
                     break;
             }
         }
-        goalsLabel.setText(goalsLabel.getText() + " " + player.getGoals());
+        goalsLabel.setText (goalsLabel.getText() + " " + player.getGoals() + " " + " Appearances: " + player.getAppearances());
         if (player.getPosition().contains("G")) {
             goalsConcededLabel.setText(goalsConcededLabel.getText() + " " + player.getGoalsConceded());
             goalsConcededLabel.setVisible(true);

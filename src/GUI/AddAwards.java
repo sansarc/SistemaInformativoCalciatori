@@ -81,25 +81,32 @@ public class AddAwards extends JFrame {
         selectTeamBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int idTeam = -1;
-                for(var t : teams) {
-                    if(t.getName().equals(selectTeamBox.getSelectedItem().toString()) ) {
-                        idTeam = t.getId();
-                        break;
+                if(selectTeamBox.getSelectedIndex() > 0) {
+                    int idTeam = -1;
+                    for(var t : teams) {
+                        if(t.getName().equals(selectTeamBox.getSelectedItem().toString()) ) {
+                            idTeam = t.getId();
+                            break;
+                        }
                     }
+                    SimpleDateFormat varDate = new SimpleDateFormat("MM/dd/yyyy");
+                    Date dt = new Date();
+                    try {
+                        dt = varDate.parse(dateWinnerField.getText());
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                        return;
+                    }
+                    boolean v = QueryTools.selectTeamTool(selectTeamBox, selectPlayerBox, players, idTeam, dt);
+                    insertButton.setEnabled(v);
+                    selectPlayerBox.setEnabled(v);
                 }
-                SimpleDateFormat varDate = new SimpleDateFormat("MM/dd/yyyy");
-                Date dt = new Date();
-                try {
-                    dt = varDate.parse(dateWinnerField.getText());
+                else {
+                    boolean v = QueryTools.selectTeamTool(selectTeamBox);
+                    insertButton.setEnabled(v);
+                    selectPlayerBox.setEnabled(v);
                 }
-                catch (Exception ex) {
-                    ex.printStackTrace();
-                    return;
-                }
-                boolean v = QueryTools.selectTeamTool(selectTeamBox, selectPlayerBox, players, idTeam, dt);
-                insertButton.setEnabled(v);
-                selectPlayerBox.setEnabled(v);
             }
         });
         insertButton.addActionListener(new ActionListener() {

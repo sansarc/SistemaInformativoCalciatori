@@ -90,57 +90,14 @@ public class Query {
         return ids;
     }
     public int insertPlayer(Player playerRequest, String img) {
-        /*var resp = queryPlayers((Player_Profile)playerRequest, null, false, false, null, '\0','\0','\0','\0',-1,null,false);
-        if (!resp.isEmpty()) {
-            int choice = JOptionPane.showConfirmDialog(null, "Esiste già un calciatore corrispondente ai dati inseriti, si vuole proseguire comunque?", "Calciatore già presente", JOptionPane.YES_NO_OPTION);
-            if (choice == JOptionPane.YES_OPTION)
-                return insertPlayer_query(playerRequest,img);
-        }
-        else {*/
-            return insertPlayer_query(playerRequest,img);
-        //}
-        //return -1;
-    }
-    public int updatePlayer(Player playerRequest) {
-        int idPlayer = -1;
-        Connection connection = DBconnection.connect();
-        String query = "UPDATE PLAYER SET Player_Name = ?,Lastname = ?,birthdate = ?,foot = ?,positions = ? WHERE idPlayer = ? RETURNING IDPLAYER";
-        if(playerRequest.getRetirementDate() != null) {
-            query += ", retirementDate = ?";
-        }
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, playerRequest.getName());
-            statement.setString(2, playerRequest.getLastName());
-            statement.setDate(3, new java.sql.Date(playerRequest.getBirthDate().getTime()));
-            statement.setString(4, Character.toString(playerRequest.getFoot()));
-            statement.setString(5, playerRequest.getPosition());
-            statement.setInt(6, playerRequest.getId());
-            if(playerRequest.getRetirementDate() != null) {
-                statement.setDate(7, new java.sql.Date(playerRequest.getRetirementDate().getTime()));
-            }
-            System.out.println(statement);
-            var rs = statement.executeQuery();
-            if (rs.next()) {
-                idPlayer = rs.getInt(1);
-            }
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }finally {
-            DBconnection.disconnect(connection);
-            return idPlayer;
-        }
-    }
-    private int insertPlayer_query(Player playerRequest, String img) {
         int idPlayer = -1;
         Connection connection = DBconnection.connect();
         String query = "";
         if(img.isBlank()) {
-            query = "INSERT INTO PLAYER(player_name, lastname, birthdate, foot, positions) VALUES(?,?,?,?,?) RETURNING IDPLAYER";
+            query = "INSERT INTO PLAYER(player_name, lastname, birthdate, foot, positions, retirementDate) VALUES(?,?,?,?,?,?) RETURNING IDPLAYER";
         }
         else {
-            query = "INSERT INTO PLAYER(player_name, lastname, birthdate, foot, positions,image_data ) VALUES(?,?,?,?,?,?) RETURNING IDPLAYER";
+            query = "INSERT INTO PLAYER(player_name, lastname, birthdate, foot, positions,retirementDate, image_data ) VALUES(?,?,?,?,?,?,?) RETURNING IDPLAYER";
         }
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, playerRequest.getName());
@@ -148,7 +105,8 @@ public class Query {
             statement.setDate(3, new java.sql.Date(playerRequest.getBirthDate().getTime()));
             statement.setString(4, Character.toString(playerRequest.getFoot()));
             statement.setString(5, playerRequest.getPosition());
-            if(!img.isBlank()) statement.setBytes(6, img.getBytes());
+            statement.setDate(6, (playerRequest.getRetirementDate() != null) ? new java.sql.Date(playerRequest.getRetirementDate().getTime()) : null);
+            if(!img.isBlank()) statement.setBytes(7, img.getBytes());
             System.out.println(statement);
             var rs = statement.executeQuery();
             if (rs.next()) {
@@ -163,6 +121,42 @@ public class Query {
             return idPlayer;
         }
     }
+    public int updatePlayer(Player playerRequest, String img) {
+        int idPlayer = -1;
+        Connection connection = DBconnection.connect();
+        String query = "";
+        if(img.isBlank())
+            query = "UPDATE PLAYER SET Player_Name = ?,Lastname = ?,birthdate = ?,foot = ?,positions = ?, retirementDate = ? WHERE idPlayer = ? RETURNING IDPLAYER";
+        else
+            query = "UPDATE PLAYER SET Player_Name = ?,Lastname = ?,birthdate = ?,foot = ?,positions = ?, retirementDate = ?,image_data = ? WHERE idPlayer = ? RETURNING IDPLAYER";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, playerRequest.getName());
+            statement.setString(2, playerRequest.getLastName());
+            statement.setDate(3, new java.sql.Date(playerRequest.getBirthDate().getTime()));
+            statement.setString(4, Character.toString(playerRequest.getFoot()));
+            statement.setString(5, playerRequest.getPosition());
+            statement.setDate(6, (playerRequest.getRetirementDate() != null) ? new java.sql.Date(playerRequest.getRetirementDate().getTime()) : null );
+            if (!img.isBlank()) {
+                statement.setBytes(7, img.getBytes());
+                statement.setInt(8, playerRequest.getId());
+            } else {
+                statement.setInt(7, playerRequest.getId());
+            }
+            System.out.println(statement);
+            var rs = statement.executeQuery();
+            if (rs.next()) {
+                idPlayer = rs.getInt(1);
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            DBconnection.disconnect(connection);
+            return idPlayer;
+        }
+    }
+
     public Player_Profile getPlayerProfileFromId(int id) {
         Connection connection = DBconnection.connect();
         String query = "SELECT * FROM PLAYER_PROFILE WHERE IDPlayer = ?";
@@ -182,6 +176,7 @@ public class Query {
                     player.setGoals(rs.getInt(7));
                     player.setPosition(rs.getString(9));
                     player.setImage(rs.getBytes(10));
+                    player.setAppearances(rs.getInt(11));
                     if (player.getPosition().contains("G")) player.setGoalsConceded(rs.getInt(8));
                 }
             }
@@ -315,7 +310,7 @@ public class Query {
         List<String> nations = new ArrayList<String>();
         nations.add("");
         Connection connection = DBconnection.connect();
-        String query = "SELECT DISTINCT NATION FROM TEAM";
+        String query = "SELECT DISTINCT NATION FROM TEAM ORDER BY NATION";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             var rs = statement.executeQuery();
             while (rs.next()) {
@@ -334,7 +329,7 @@ public class Query {
         List<String> levels = new ArrayList<String>();
         levels.add("");
         Connection connection = DBconnection.connect();
-        String query = "SELECT DISTINCT LEVEL FROM TEAM WHERE nation = ?";
+        String query = "SELECT DISTINCT LEVEL FROM TEAM WHERE nation = ? ORDER BY LEVEL";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, nation);
             var rs = statement.executeQuery();
@@ -439,10 +434,11 @@ public class Query {
         List<Player> players = new ArrayList<Player>();
         players.add(new Player());
         Connection connection = DBconnection.connect();
-        String query = "SELECT idPlayer, player_name, lastname FROM PLAYER_CARREER WHERE idTeam = ? AND ? BETWEEN startdate AND enddate";
+        String query = "SELECT idPlayer, player_name, lastname FROM PLAYER_CARREER WHERE idTeam = ? AND ( (? BETWEEN startdate AND enddate) OR (? > startdate AND enddate IS NULL) )";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idTeam);
             statement.setDate(2, new java.sql.Date(dt.getTime()));
+            statement.setDate(3, new java.sql.Date(dt.getTime()));
             var rs = statement.executeQuery();
             while (rs.next()) {
                 Player p = new Player();
@@ -462,7 +458,7 @@ public class Query {
     public List<Integer> select_player_carreer(int idPlayer, boolean isGoalkeeper) {
         List<Integer> ids = new ArrayList<Integer>();
         Connection connection = DBconnection.connect();
-        String query = "SELECT idTransfer,team_name,TO_CHAR(startdate, 'MM/DD/YYYY') AS startdate, TO_CHAR(enddate, 'MM/DD/YYYY') AS enddate, goalsscored, appearances, goalsconceded AS goalsconceded  FROM PLAYER_CARREER WHERE IDPlayer = ? ORDER BY STARTDATE DESC";
+        String query = "SELECT idTransfer,team_name,TO_CHAR(startdate, 'MM/DD/YYYY') AS startdate_formatted, TO_CHAR(enddate, 'MM/DD/YYYY') AS enddate_formatted, goalsscored, appearances, goalsconceded AS goalsconceded  FROM PLAYER_CARREER WHERE IDPlayer = ? ORDER BY STARTDATE DESC";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idPlayer);

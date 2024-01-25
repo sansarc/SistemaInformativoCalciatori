@@ -22,6 +22,7 @@ public class AddOrEditPlayer extends JFrame {
     private JButton insertButton;
     private JTextField imagePathField;
     private JButton returnInMainPageButton;
+    private JTextField retirementDateField;
 
     public AddOrEditPlayer(Player player) {
         setContentPane(panel);
@@ -78,6 +79,8 @@ public class AddOrEditPlayer extends JFrame {
                     break;
             }
             footComboBox.setSelectedItem(f);
+            if(player.getRetirementDate() != null)
+                retirementDateField.setText(sdf.format(player.getRetirementDate()));
         }
         goalkeeperCheckBox.addActionListener(new ActionListener() {
             @Override
@@ -131,28 +134,43 @@ public class AddOrEditPlayer extends JFrame {
                 new Main();
                 dispose();
             }
-        });        insertButton.addActionListener(new ActionListener() {
+        });
+        insertButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                char foot = '\0';
+                SimpleDateFormat varDate = new SimpleDateFormat("MM/dd/yyyy");
                 Date birthdate = new Date();
-                if(playerName.getText().isBlank() || playerLastName.getText().isBlank() || (!forwardCheckBox.isSelected() && !midfielderCheckBox.isSelected() && !defenderCheckBox.isSelected() && !goalkeeperCheckBox.isSelected() ) || playerBirthDate_s.getText().isBlank() || footComboBox.getSelectedItem().equals('\0') ) {
+                if(playerName.getText().isBlank() || playerLastName.getText().isBlank() || (!forwardCheckBox.isSelected() && !midfielderCheckBox.isSelected() && !defenderCheckBox.isSelected() && !goalkeeperCheckBox.isSelected() ) || playerBirthDate_s.getText().isBlank() || footComboBox.getSelectedIndex() == 0 ) {
                     JOptionPane.showMessageDialog(null, "Error: fields marked with \"*\" are mandatory!", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                else
+                try
                 {
+                    birthdate = varDate.parse(playerBirthDate_s.getText());
+                }
+                catch (Exception exception)
+                {
+                    JOptionPane.showMessageDialog(null, "Error: the birth date must be expressed in the required format!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                Date retirementDate = null;
+                if(!retirementDateField.getText().isBlank()) {
                     try
                     {
-                        SimpleDateFormat varDate = new SimpleDateFormat("MM/dd/yyyy");
-                        birthdate = varDate.parse(playerBirthDate_s.getText());
+                        retirementDate = new Date();
+                        retirementDate = varDate.parse(retirementDateField.getText());
                     }
                     catch (Exception exception)
                     {
-                        JOptionPane.showMessageDialog(null, "Error: the date must be expressed in the required format!", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Error: the retirement date must be expressed in the required format!", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
+                if(!imagePathField.getText().isBlank() && ! imagePathField.getText().substring(imagePathField.getText().lastIndexOf('.')+1).equals("jpg")) {
+                    JOptionPane.showMessageDialog(null, "Error: the image is not in jpg format!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                char foot = '\0';
                 if (footComboBox.getSelectedItem().equals("Right"))
                     foot = 'R';
                 else if (footComboBox.getSelectedItem().equals("Left"))
@@ -196,8 +214,9 @@ public class AddOrEditPlayer extends JFrame {
                 }
                 catch(Exception ex) {
                     JOptionPane.showMessageDialog(null, "Error: invalid path \" + imagePathField.getText() + \"", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
-                Player playerRequest = new Player(playerName.getText(), playerLastName.getText(), positions, birthdate, null, foot, -1);
+                Player playerRequest = new Player(playerName.getText(), playerLastName.getText(), positions, birthdate, retirementDate, foot, -1);
                 var query = new Query();
                 int playerId = -1;
                 if(!isEdit) {
@@ -205,7 +224,7 @@ public class AddOrEditPlayer extends JFrame {
                 }
                 else {
                     playerRequest.setId(player.getId());
-                    playerId = query.updatePlayer(playerRequest);
+                    playerId = query.updatePlayer(playerRequest, playerImg);
                 }
                 if(playerId == -1) {
                     JOptionPane.showMessageDialog(null, "Error: player not inserted!", "Error", JOptionPane.ERROR_MESSAGE);

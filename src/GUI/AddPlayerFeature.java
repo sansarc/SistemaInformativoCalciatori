@@ -30,7 +30,7 @@ public class AddPlayerFeature extends JFrame {
         insertButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(featureComboBox.getSelectedIndex() > 1) {
+                if(featureComboBox.getSelectedIndex() >= 1) {
                     var ret = query.insertPlayerFeature(player.getId(), featureComboBox.getSelectedItem().toString());
                     if(ret != -1) {
                         JOptionPane.showMessageDialog(null, "Instance added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
