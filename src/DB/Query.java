@@ -592,7 +592,7 @@ public class Query {
         List<Award> awardsResponse = new ArrayList<Award>();
         int awardId = -1;
         Connection connection = DBconnection.connect();
-        String query = "(SELECT idaward,name,windate FROM AWARD WHERE IDPLAYER = ?) UNION (SELECT A.idaward, A.name, A.windate FROM AWARD A, PLAYER_CARREER PC WHERE A.IDTEAM = PC.IDTEAM AND PC.IDPLAYER = ? AND A.WINDATE BETWEEN PC.STARTDATE AND PC.ENDDATE) ORDER BY WINDATE DESC";
+        String query = "SELECT idaward, name, windate FROM AWARD WHERE IDPLAYER = ? UNION SELECT A.idaward, A.name, A.windate FROM AWARD A, PLAYER_CARREER PC WHERE A.IDTEAM = PC.IDTEAM AND PC.IDPLAYER = ? AND ((A.WINDATE BETWEEN PC.STARTDATE AND PC.ENDDATE) OR (A.windate > PC.startdate AND PC.enddate IS NULL)) ORDER BY WINDATE DESC;";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idPlayer);
             statement.setInt(2, idPlayer);
