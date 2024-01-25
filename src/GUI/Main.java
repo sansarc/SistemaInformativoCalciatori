@@ -336,7 +336,6 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 InitFilters();
-                dispose();
             }
         });
         logoutButton.addActionListener(new ActionListener() {
@@ -359,7 +358,7 @@ public class Main extends JFrame {
 
     private boolean isFormOk() {
         int ret;
-        if (nameTextField.getText().isBlank() && lastNameLabel.getText().isBlank()
+        if (nameTextField.getText().isBlank() && lastnameTextField.getText().isBlank()
                 && teamComboBox.getSelectedIndex() < 1 && levelComboBox.getSelectedIndex() < 1 && nationComboBox.getSelectedIndex() < 1
                 && !retiredCheckBox.isSelected()  && !freeagentCheckBox.isSelected()
                 && getCheckedPositions().isEmpty()
@@ -395,7 +394,7 @@ public class Main extends JFrame {
     }
     private void InitFilters() {
         nameTextField.setText("");
-        lastNameLabel.setText("");
+        lastnameTextField.setText("");
         retiredCheckBox.setSelected(false);
         freeagentCheckBox.setSelected(false);
         forwardCheckBox.setSelected(false);
